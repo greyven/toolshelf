@@ -44,7 +44,7 @@ Tes réglages et les fiches rédigées automatiquement sont gardés dans `~/.cla
 
 ## Un projet que j'espère communautaire
 
-Je ne suis pas développeur, et je ne serai pas en mesure de relire et de garantir chaque proposition de code envoyée sur ce dépôt. Plutôt que de laisser des propositions sans réponse, je préfère dire clairement comment le projet peut vivre :
+Je ne serai pas en mesure de relire et de garantir chaque proposition de code envoyée sur ce dépôt. Plutôt que de laisser des propositions sans réponse, je préfère dire clairement comment le projet peut vivre :
 
 - **Copiez-le et améliorez-le librement.** La licence MIT l'autorise, à la seule condition de garder la mention de l'auteur d'origine (le fichier `LICENSE`).
 - **Faites-le savoir.** Si vous publiez une version améliorée, ouvrez une *issue* sur ce dépôt avec le lien vers votre copie (*fork*), ou citez ce dépôt dans votre README. C'est ainsi que tout le monde, moi compris, peut profiter des améliorations.
@@ -105,7 +105,7 @@ Your settings and the automatically written cards are kept in `~/.claude/toolshe
 
 ## A project I hope will become community-driven
 
-I am not a developer, and I will not be able to review and vouch for every code contribution sent to this repository. Rather than leave contributions unanswered, I prefer to say clearly how the project can live on:
+I will not be able to review and vouch for every code contribution sent to this repository. Rather than leave contributions unanswered, I prefer to say clearly how the project can live on:
 
 - **Copy it and improve it freely.** The MIT license allows it, as long as you keep the original author notice (the `LICENSE` file).
 - **Let people know.** If you publish an improved version, open an *issue* on this repository with a link to your fork, or mention this repository in your README. That way everyone, me included, can benefit from the improvements.
