@@ -1,6 +1,6 @@
 {
   "name": "toolshelf",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Panel that lists your plugins, skills, connectors and computer tools, explains each one, and suggests the right one while you type (French and English).",
   "author": { "name": "Greyven", "url": "https://github.com/greyven" },
   "homepage": "https://github.com/greyven/toolshelf",

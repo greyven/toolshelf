@@ -80,13 +80,13 @@ export const register: Register = (on, options) => {
 
   on('session.start', async ($, e, next) => {
     await applyShared($, await migrateFromStore($))
-    await $.command.register({ name: 'outils', description: (await t($)).commandDescription })
+    await $.command.register({ name: 'tools', description: (await t($)).commandDescription })
     await discover($)
     void openPane($)
     return next(e)
   })
 
-  on('command.run', { command: 'outils' }, async $ => {
+  on('command.run', { command: 'tools' }, async $ => {
     await reloadShared($)
     await discover($)
     await openPane($)

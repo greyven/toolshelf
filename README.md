@@ -27,7 +27,7 @@ Dans Claude Code :
 /reload-plugins
 ```
 
-Le panneau s'ouvre au début de chaque discussion. La commande `/outils` le rouvre et actualise la liste.
+Le panneau s'ouvre au début de chaque discussion. La commande `/tools` le rouvre et actualise la liste.
 
 ## Personnaliser
 
@@ -88,7 +88,7 @@ In Claude Code:
 /reload-plugins
 ```
 
-The panel opens at the start of each conversation. The `/outils` command reopens it and refreshes the list.
+The panel opens at the start of each conversation. The `/tools` command reopens it and refreshes the list.
 
 ## Customizing
 

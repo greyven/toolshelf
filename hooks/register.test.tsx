@@ -27,7 +27,7 @@ const PANE = {
 } as const
 
 test('liste, surlignage et usage', async ($, on) => {
-  on('command.register', () => ({ value: { command: 'outils' } }))
+  on('command.register', () => ({ value: { command: 'tools' } }))
   on('ui.open', () => ({ value: { isPlaced: true } }))
   on('command.list', () => ({
     value: [
@@ -124,8 +124,8 @@ test('liste, surlignage et usage', async ($, on) => {
 // Les fiches sont rédigées en arrière-plan : on attend que le nombre d'appels au modèle soit atteint.
 const until = async (ok: () => boolean) => { for (let i = 0; i < 100 && !ok(); i++) await new Promise(r => setTimeout(r, 10)) }
 
-test('fiche automatique et rafraîchissement par /outils', async ($, on) => {
-  on('command.register', () => ({ value: { command: 'outils' } }))
+test('fiche automatique et rafraîchissement par /tools', async ($, on) => {
+  on('command.register', () => ({ value: { command: 'tools' } }))
   on('ui.open', () => ({ value: { isPlaced: true } }))
   let tools = [{ name: 'nouveau', description: 'Converts videos', source: 'user' }]
   on('command.list', () => ({ value: tools }))
@@ -165,9 +165,9 @@ test('fiche automatique et rafraîchissement par /outils', async ($, on) => {
   await until(() => asked >= 2)
   expect(asked).toBe(2)
 
-  // Un outil installé pendant la session apparaît après /outils, avec sa fiche.
+  // Un outil installé pendant la session apparaît après /tools, avec sa fiche.
   tools = [...tools, { name: 'autre', description: 'Another tool', source: 'user' }]
-  await $.command.run({ command: 'outils' })
+  await $.command.run({ command: 'tools' })
   expect(await ui.find({ type: 'Text', text: /SKILLS · 2/ })).toBeTruthy()
   await until(() => !!ficheFr()?.autre)
   expect(asked).toBe(3)
@@ -175,7 +175,7 @@ test('fiche automatique et rafraîchissement par /outils', async ($, on) => {
 })
 
 test('les réglages viennent du fichier commun, quelle que soit la discussion', async ($, on) => {
-  on('command.register', () => ({ value: { command: 'outils' } }))
+  on('command.register', () => ({ value: { command: 'tools' } }))
   on('ui.open', () => ({ value: { isPlaced: true } }))
   on('command.list', () => ({ value: [] }))
   // Réglages laissés par une autre discussion, encore sous l'ancien nom du mod (boite-a-outils).
@@ -210,7 +210,7 @@ test('les réglages viennent du fichier commun, quelle que soit la discussion', 
 })
 
 test('la case à cocher active et désactive plugins et skills', async ($, on) => {
-  on('command.register', () => ({ value: { command: 'outils' } }))
+  on('command.register', () => ({ value: { command: 'tools' } }))
   on('ui.open', () => ({ value: { isPlaced: true } }))
   on('ui.toast', () => ({ value: undefined }))
   on('command.list', () => ({
@@ -255,7 +255,7 @@ test('la case à cocher active et désactive plugins et skills', async ($, on) =
 })
 
 test('la case d’un connecteur le met en réserve puis le remet à l’identique', async ($, on) => {
-  on('command.register', () => ({ value: { command: 'outils' } }))
+  on('command.register', () => ({ value: { command: 'tools' } }))
   on('ui.open', () => ({ value: { isPlaced: true } }))
   on('ui.toast', () => ({ value: undefined }))
   on('command.list', () => ({ value: [] }))
@@ -286,7 +286,7 @@ test('la case d’un connecteur le met en réserve puis le remet à l’identiqu
 })
 
 test('actualisation, connecteurs et outils de l’ordinateur', async ($, on) => {
-  on('command.register', () => ({ value: { command: 'outils' } }))
+  on('command.register', () => ({ value: { command: 'tools' } }))
   on('ui.open', () => ({ value: { isPlaced: true } }))
   on('ui.toast', () => ({ value: undefined }))
   let cmds: { name: string; description: string; source: string; plugin?: string }[] = []
@@ -331,7 +331,7 @@ test('actualisation, connecteurs et outils de l’ordinateur', async ($, on) => 
 })
 
 test('un module en cours d’utilisation est surligné', async ($, on) => {
-  on('command.register', () => ({ value: { command: 'outils' } }))
+  on('command.register', () => ({ value: { command: 'tools' } }))
   on('ui.open', () => ({ value: { isPlaced: true } }))
   on('command.list', () => ({ value: [] }))
   on('tool.list', () => ({ value: [{ name: 'mcp__rea__open_binary', description: '', mcp: true }] }))
@@ -362,7 +362,7 @@ test('un module en cours d’utilisation est surligné', async ($, on) => {
 })
 
 test('la bande propose les outils utiles pendant la frappe, et se vide à l’envoi', async ($, on) => {
-  on('command.register', () => ({ value: { command: 'outils' } }))
+  on('command.register', () => ({ value: { command: 'tools' } }))
   on('ui.open', () => ({ value: { isPlaced: true } }))
   on('command.list', () => ({ value: [{ name: 'llm-council', description: 'Council', source: 'user' }] }))
   on('env.get', () => ({ value: 'C:/Users/test' }))
@@ -420,7 +420,7 @@ test('les mots-clés d’une fiche se lisent, se modifient et se réécrivent en
 })
 
 test('les mots-clés d’une carte se modifient dans les réglages et changent les suggestions', async ($, on) => {
-  on('command.register', () => ({ value: { command: 'outils' } }))
+  on('command.register', () => ({ value: { command: 'tools' } }))
   on('ui.open', () => ({ value: { isPlaced: true } }))
   on('command.list', () => ({ value: [{ name: 'llm-council', description: 'Council', source: 'user' }] }))
   let file: string | undefined
