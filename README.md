@@ -10,10 +10,11 @@ Un panneau pour Claude Code qui montre **tous tes outils au même endroit** : pl
 
 ## Ce qu'il fait
 
-- **Recense tes outils** tout seul, sans liste à tenir à jour : plugins, skills personnels, connecteurs (y compris ceux de claude.ai) et programmes du PC décrits dans `fiches/outils-pc.json`.
+- **Recense tes outils** tout seul, sans liste à tenir à jour : plugins, skills personnels, connecteurs (y compris ceux de claude.ai) et programmes du PC décrits dans `fiches/outils-pc.json`. Un outil que tu viens d'installer apparaît dès la conversation suivante (ou tout de suite avec ↻ Actualiser).
+- **S'affiche tout seul** au début de chaque conversation ; sinon, la commande `/tools` le rouvre.
 - **Une fiche par outil** : ce qu'il fait, son mode d'emploi, pourquoi et quand s'en servir, des exemples. Sept fiches sont livrées ; pour les autres outils, une fiche est rédigée automatiquement par un petit modèle (Haiku).
 - **Suggestions pendant la frappe** : une bande au-dessus de la zone de saisie propose les outils utiles pour ce que tu es en train d'écrire, d'après leur nom et leurs mots-clés.
-- **Surlignage** de l'outil en cours d'utilisation pendant que Claude travaille.
+- **Montre quels outils Claude utilise** pour traiter ta demande : l'outil en cours d'utilisation est surligné dans le panneau.
 - **Cases à cocher** pour activer ou désactiver un plugin, un skill personnel ou un connecteur, sans rien supprimer.
 - **Réglages** (⚙) : langue (français ou anglais), couleurs, légende, outils affichés, et mots-clés de déclenchement de chaque outil.
 
@@ -71,10 +72,11 @@ A panel for Claude Code that shows **all your tools in one place**: plugins, ski
 
 ## What it does
 
-- **Lists your tools** on its own, with no list to maintain: plugins, personal skills, connectors (claude.ai ones included) and computer programs described in `fiches/outils-pc.json`.
+- **Lists your tools** on its own, with no list to maintain: plugins, personal skills, connectors (claude.ai ones included) and computer programs described in `fiches/outils-pc.json`. A tool you just installed shows up from the next conversation (or right away with ↻ Refresh).
+- **Opens on its own** at the start of each conversation; otherwise, the `/tools` command reopens it.
 - **One card per tool**: what it does, how to use it, why and when, examples. Seven cards are shipped; for other tools, a card is written automatically by a small model (Haiku).
 - **Suggestions while you type**: a band above the prompt suggests the tools that fit what you are writing, from their name and keywords.
-- **Highlights** the tool in use while Claude works.
+- **Shows which tools Claude uses** to handle your request: the tool in use is highlighted in the panel.
 - **Checkboxes** to enable or disable a plugin, a personal skill or a connector, without deleting anything.
 - **Settings** (⚙): language (French or English), colors, legend, shown tools, and each tool's trigger keywords.
 
