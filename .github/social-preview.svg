@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1280" height="640" viewBox="0 0 1280 640">
+  <!-- Image d'aperçu des liens vers le dépôt (Settings → Social preview) : l'icône à gauche, le nom et une phrase à droite. -->
+  <defs>
+    <linearGradient id="fond" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2e2521"/>
+      <stop offset="1" stop-color="#1b1613"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="640" fill="url(#fond)"/>
+  <image x="90" y="140" width="360" height="360" xlink:href="../.claude-plugin/icon.svg" href="../.claude-plugin/icon.svg"/>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
+    <text x="520" y="285" font-size="112" font-weight="700" fill="#f3eee8">Toolshelf</text>
+    <rect x="524" y="318" width="120" height="10" rx="5" fill="#9b7be0"/>
+    <text x="520" y="398" font-size="40" fill="#d8d3cc">All your Claude Code tools in one place,</text>
+    <text x="520" y="452" font-size="40" fill="#d8d3cc">with suggestions while you type.</text>
+    <text x="520" y="540" font-size="28" fill="#9a918a">github.com/greyven/toolshelf</text>
+  </g>
+</svg>

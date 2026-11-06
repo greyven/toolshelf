@@ -1,3 +1,5 @@
+<p align="center"><img src=".claude-plugin/icon.png" alt="Toolshelf" width="128" height="128"></p>
+
 # Toolshelf — Mes Outils Installés
 
 *[English version below](#english)*
