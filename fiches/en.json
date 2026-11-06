@@ -1,0 +1,72 @@
+{
+  "ponytail": {
+    "mode": "mixte",
+    "what": "Write as little code as possible",
+    "how": "Passive: once enabled, it applies on its own to every coding answer. Active: the review and audit commands are launched by hand.\nLevels, chosen in its band above the prompt or with /ponytail:ponytail <level>:\n• off: turned off, Claude works normally.\n• lite: builds what is asked as is, and points out a simpler version in one line if there is one.\n• full (default): the smallest change that fully solves the problem, with no option, abstraction or dependency nobody asked for.\n• ultra: like full, and also questions the request itself before building.\nAt every level, nothing that was asked for is skipped, nor security, nor what protects data.",
+    "why": "Avoid unneeded code, useless abstractions and dependencies added for a few lines.",
+    "when": "Whenever you write, fix or refactor code.",
+    "ex": ["/ponytail:ponytail full   (lite, ultra, off)", "/ponytail:ponytail-review", "/ponytail:ponytail-audit", "/ponytail:ponytail-debt"],
+    "trigger": "\\b(code|function|bug|fix|refactor|simplif|writ|add|implement|script|class|method)",
+    "hint": "You are about to touch code: ponytail keeps the change minimal."
+  },
+  "agent-skills": {
+    "mode": "mixte",
+    "what": "Engineering method: specify, plan, test, review, ship",
+    "how": "Passive: Claude loads the right skill for the task on its own (TDD, debugging, security…). Active: the /agent-skills:… commands are launched by hand.",
+    "why": "Follow a proven process instead of coding straight away.",
+    "when": "New feature, bug to trace, review before merge, release, security, performance.",
+    "ex": ["/agent-skills:spec", "/agent-skills:plan", "/agent-skills:test", "/agent-skills:review", "/agent-skills:ship", "/agent-skills:build auto   (read the plan first)"],
+    "trigger": "(feature|spec|plan|break down|\\btests?\\b|review|release|deploy|ship|secur|perf|slow|optimi|error|crash)",
+    "hint": "A method task: spec, plan, test or review depending on the stage."
+  },
+  "graphify": {
+    "mode": "actif",
+    "what": "Turn a code folder into a knowledge graph",
+    "how": "You run /graphify to build the graph (in graphify-out/). Then a hook points Claude to the graph on its own.",
+    "why": "Understand an unknown or large project: what calls what, which files are linked.",
+    "when": "Architecture question, project to explore or forgotten.",
+    "ex": ["/graphify .", "/graphify query \"where is login handled?\"", "/graphify path \"main\" \"helper\"", "graphify update .   (terminal, no model)"],
+    "trigger": "(architecture|structure|understand|explor|where is|who calls|what calls|dependenc|relation|overview)",
+    "hint": "A question about the project's structure: /graphify . then /graphify query."
+  },
+  "anthropic-skills": {
+    "mode": "mixte",
+    "what": "Anthropic skills: PDF, Word, Excel, PowerPoint, browser, research",
+    "how": "Passive: Claude loads the right skill on its own when the task involves an office file or the browser. Active: some are launched by hand, like deep research or skill creation.",
+    "why": "Read and produce office files correctly, drive the browser, create your own skills.",
+    "when": "You handle a .pdf, .docx, .xlsx or .pptx, want documented research, or want to create a skill.",
+    "ex": ["/anthropic-skills:pdf", "/anthropic-skills:xlsx", "/anthropic-skills:deep-research", "/anthropic-skills:skill-creator", "/anthropic-skills:consolidate-memory"],
+    "trigger": "(pdf|\\bword\\b|docx|excel|xlsx|spreadsheet|powerpoint|pptx|deep research|browser|creat\\w* a skill)",
+    "hint": "Office file, browser or research: an Anthropic skill handles it."
+  },
+  "rea": {
+    "mode": "mixte",
+    "what": "Reverse engineering: analyze a program without its source code",
+    "how": "Passive: Claude uses the REA tools on its own when you ask it to analyze an .exe, a .dll, an Electron, .NET or Android app. Active: you point it to the file to analyze. On Windows, Ghidra only does read-only analysis of Windows programs (.exe, .dll).",
+    "why": "Understand what existing software does, check a suspicious file, recover how an old program works.",
+    "when": "You have an executable, a library or an app whose source code you don't have.",
+    "ex": ["Analyze program.exe with REA", "Decompile the main function of this .exe", "What does this Electron app do?"],
+    "trigger": "(\\.exe|\\.dll|\\.apk|binary|decompil|disassembl|reverse|ghidra|electron|firmware|malware)",
+    "hint": "Analyzing a program without source code: REA and Ghidra."
+  },
+  "Unity CLI": {
+    "mode": "actif",
+    "what": "Drive the Unity editor from the command line",
+    "how": "A program installed on the computer (not a plugin). The Unity plugin's skills use it to drive the open editor: scenes, assets, C#, playing the game, screenshots, compiling. Important: each Unity project must be created with the Unity Pipeline package, otherwise the CLI cannot take over the editor.",
+    "why": "Let Claude act in Unity without the mouse.",
+    "when": "Create a project, install an editor or a package, compile, test, edit a scene.",
+    "ex": ["unity editors", "unity install lts", "unity projects", "Create a new Unity 2D project with the Unity Pipeline package"],
+    "trigger": "\\bunity\\b",
+    "hint": "Working in Unity: the Unity CLI and the Unity plugin can act in the editor."
+  },
+  "llm-council": {
+    "mode": "actif",
+    "what": "Have five AI advisors debate a decision",
+    "how": "You launch it with a trigger phrase. Claude can also suggest it on its own for a real choice. Eleven model calls per session; writes an HTML report and a transcript in the folder.",
+    "why": "Test an important choice against the complacency of a single answer.",
+    "when": "A real decision with stakes and several options, not a factual question.",
+    "ex": ["council this: plain PHP or a framework for this project?", "pressure-test this: my three-page plan", "debate this: SQL or JSON files"],
+    "trigger": "(should i|which option|choose|choice between|torn between|can't decide|rather|\\bvs\\b|versus|best (option|solution|approach)|decision|decide|council)",
+    "hint": "A decision to make: \"council this: …\"."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "toolshelf",
+  "owner": { "name": "Greyven", "url": "https://github.com/greyven" },
+  "description": "Toolbox panel for Claude Code: all your tools in one place, with suggestions while you type.",
+  "plugins": [
+    {
+      "name": "toolshelf",
+      "source": "./",
+      "description": "Panel that lists your plugins, skills, connectors and computer tools, explains each one, and suggests the right one while you type."
+    }
+  ]
+}

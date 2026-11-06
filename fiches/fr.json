@@ -1,0 +1,72 @@
+{
+  "ponytail": {
+    "mode": "mixte",
+    "what": "Écrire le moins de code possible",
+    "how": "Passif : une fois activé, il s'applique tout seul à chaque réponse de code. Actif : les commandes de revue et d'audit se lancent à la main.\nNiveaux, à choisir dans sa bande au-dessus de la saisie ou avec /ponytail:ponytail <niveau> :\n• off : éteint, Claude travaille normalement.\n• lite : construit ce qui est demandé tel quel, et signale en une ligne une version plus simple si elle existe.\n• full (par défaut) : la plus petite modification qui résout entièrement le problème, sans option, abstraction ni dépendance non demandées.\n• ultra : comme full, et remet aussi en question la demande elle-même avant de construire.\nÀ tous les niveaux, rien de ce qui est demandé n'est sauté, ni la sécurité, ni ce qui protège les données.",
+    "why": "Éviter le code superflu, les abstractions inutiles et les dépendances ajoutées pour quelques lignes.",
+    "when": "Dès que tu écris, corriges ou refactores du code.",
+    "ex": ["/ponytail:ponytail full   (lite, ultra, off)", "/ponytail:ponytail-review", "/ponytail:ponytail-audit", "/ponytail:ponytail-debt"],
+    "trigger": "\\b(code|fonction|bug|corrig|refactor|simplifi|écri[st]|ajout|implémen|script|classe|méthode)",
+    "hint": "Tu vas toucher du code : ponytail garde le changement minimal."
+  },
+  "agent-skills": {
+    "mode": "mixte",
+    "what": "Méthode d'ingénierie : spécifier, planifier, tester, relire, livrer",
+    "how": "Passif : Claude charge seul le skill adapté à la tâche (TDD, débogage, sécurité…). Actif : les commandes /agent-skills:… se lancent à la main.",
+    "why": "Suivre un processus vérifié au lieu de coder directement.",
+    "when": "Nouvelle fonctionnalité, bug à tracer, revue avant fusion, mise en ligne, sécurité, performance.",
+    "ex": ["/agent-skills:spec", "/agent-skills:plan", "/agent-skills:test", "/agent-skills:review", "/agent-skills:ship", "/agent-skills:build auto   (relis le plan avant)"],
+    "trigger": "(fonctionnalit|feature|spec|planifi|découp|\\btests?\\b|revue|review|relis|mise en ligne|déplo|sécuri|perf|lent|optimis|erreur|plante)",
+    "hint": "Tâche de méthode : spec, plan, test ou review selon l'étape."
+  },
+  "graphify": {
+    "mode": "actif",
+    "what": "Transformer un dossier de code en graphe de connaissances",
+    "how": "Tu lances /graphify pour construire le graphe (dans graphify-out/). Ensuite, un hook oriente Claude vers le graphe de lui-même.",
+    "why": "Comprendre un projet inconnu ou gros : qui appelle quoi, quels fichiers sont liés.",
+    "when": "Question d'architecture, projet à explorer ou oublié.",
+    "ex": ["/graphify .", "/graphify query \"où est gérée la connexion ?\"", "/graphify path \"main\" \"helper\"", "graphify update .   (PowerShell, sans modèle)"],
+    "trigger": "(architecture|structure|comprendre|explor|où (est|se trouve)|qui appelle|dépendanc|relation|vue d'ensemble)",
+    "hint": "Question sur la structure du projet : /graphify . puis /graphify query."
+  },
+  "anthropic-skills": {
+    "mode": "mixte",
+    "what": "Skills d'Anthropic : PDF, Word, Excel, PowerPoint, navigateur, recherche",
+    "how": "Passif : Claude charge seul le bon skill quand la tâche touche un fichier bureautique ou le navigateur. Actif : certains se lancent à la main, comme la recherche approfondie ou la création de skill.",
+    "why": "Lire et produire correctement des fichiers bureautiques, piloter le navigateur, créer tes propres skills.",
+    "when": "Tu manipules un .pdf, .docx, .xlsx ou .pptx, tu veux une recherche documentée, ou créer un skill.",
+    "ex": ["/anthropic-skills:pdf", "/anthropic-skills:xlsx", "/anthropic-skills:deep-research", "/anthropic-skills:skill-creator", "/anthropic-skills:consolidate-memory"],
+    "trigger": "(pdf|\\bword\\b|docx|excel|xlsx|tableur|powerpoint|pptx|recherche approfondie|navigateur|cré\\w* un skill)",
+    "hint": "Fichier bureautique, navigateur ou recherche : un skill Anthropic s'en charge."
+  },
+  "rea": {
+    "mode": "mixte",
+    "what": "Rétro-ingénierie : analyser un programme sans son code source",
+    "how": "Passif : Claude utilise seul les outils REA quand tu lui demandes d'analyser un .exe, une .dll, une application Electron, .NET ou Android. Actif : tu lui désignes le fichier à analyser. Sous Windows, Ghidra ne fait que de l'analyse en lecture seule des programmes Windows (.exe, .dll).",
+    "why": "Comprendre ce que fait un logiciel existant, vérifier un fichier suspect, retrouver le fonctionnement d'un vieux programme.",
+    "when": "Tu as un exécutable, une bibliothèque ou une application dont tu n’as pas le code source.",
+    "ex": ["Analyse le fichier programme.exe avec REA", "Décompile la fonction main de ce .exe", "Que fait cette application Electron ?"],
+    "trigger": "(\\.exe|\\.dll|\\.apk|binaire|décompil|désassembl|rétro-?ingénierie|reverse|ghidra|electron|firmware|malware)",
+    "hint": "Analyse d’un programme sans code source : REA et Ghidra."
+  },
+  "Unity CLI": {
+    "mode": "actif",
+    "what": "Piloter l'éditeur Unity en ligne de commande",
+    "how": "Programme installé sur l'ordinateur (pas un plugin). Les skills du plugin Unity s'en servent pour piloter l'éditeur ouvert : scènes, assets, C#, lancement du jeu, captures, compilation. Important : chaque projet Unity doit être créé avec le paquet Unity Pipeline, sinon la CLI ne peut pas prendre la main dans l'éditeur.",
+    "why": "Laisser Claude agir dans Unity sans passer par la souris.",
+    "when": "Créer un projet, installer un éditeur ou un paquet, compiler, tester, modifier une scène.",
+    "ex": ["unity editors", "unity install lts", "unity projects", "Crée un nouveau projet Unity 2D avec le paquet Unity Pipeline"],
+    "trigger": "\\bunity\\b",
+    "hint": "Travail dans Unity : la Unity CLI et le plugin Unity peuvent agir dans l’éditeur."
+  },
+  "llm-council": {
+    "mode": "actif",
+    "what": "Faire débattre cinq conseillers IA sur une décision",
+    "how": "Tu le lances avec une phrase déclencheur. Claude peut aussi le proposer seul sur un vrai choix. Onze appels de modèle par session ; écrit un rapport HTML et une transcription dans le dossier.",
+    "why": "Tester un choix important contre la complaisance d'une réponse unique.",
+    "when": "Vraie décision avec enjeux et plusieurs options, pas une question factuelle.",
+    "ex": ["council this : PHP pur ou framework pour ce projet ?", "pressure-test this : mon plan en trois pages", "debate this : SQL ou fichiers JSON"],
+    "trigger": "(dois-je|devrais-je|choisir|choix entre|hésite|quelle option|plutôt|ou bien|\\bvs\\b|versus|meilleure? (option|solution|approche)|décision|décider|trancher|conseil)",
+    "hint": "Décision à trancher : « council this : … »."
+  }
+}

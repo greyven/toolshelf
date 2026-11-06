@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Toolshelf : trois outils rangés sur une étagère, celui du milieu surligné comme une suggestion du panneau. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a2f29"/>
+      <stop offset="1" stop-color="#241d19"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c98b4f"/>
+      <stop offset="1" stop-color="#8f5a2c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="200" fill="url(#bg)"/>
+
+  <!-- Halo mauve derrière l'outil suggéré -->
+  <rect x="402" y="196" width="220" height="460" rx="56" fill="#7b5bbf" opacity="0.28"/>
+  <rect x="402" y="196" width="220" height="460" rx="56" fill="none" stroke="#9b7be0" stroke-width="14"/>
+
+  <!-- Clé plate (gauche) -->
+  <mask id="jaws">
+    <rect x="-200" y="-400" width="400" height="800" fill="#fff"/>
+    <rect x="-28" y="-290" width="56" height="90" rx="6" fill="#000"/>
+    <rect x="-24" y="210" width="48" height="80" rx="6" fill="#000"/>
+  </mask>
+  <g transform="translate(270 440) rotate(-8)" fill="#d8d3cc">
+    <g mask="url(#jaws)">
+      <rect x="-24" y="-180" width="48" height="360" rx="20"/>
+      <circle cx="0" cy="-200" r="72"/>
+      <circle cx="0" cy="210" r="62"/>
+    </g>
+  </g>
+
+  <!-- Tournevis (milieu, surligné) -->
+  <g transform="translate(512 430)">
+    <rect x="-46" y="-210" width="92" height="190" rx="40" fill="#f2c94c"/>
+    <rect x="-46" y="-150" width="92" height="22" fill="#d9a72a"/>
+    <rect x="-46" y="-96" width="92" height="22" fill="#d9a72a"/>
+    <rect x="-16" y="-24" width="32" height="200" fill="#d8d3cc"/>
+    <path d="M -16 176 l 32 0 l -6 40 l -20 0 z" fill="#b9b3ab"/>
+  </g>
+
+  <!-- Marteau (droite) -->
+  <g transform="translate(756 430) rotate(8)">
+    <rect x="-20" y="-120" width="40" height="300" rx="16" fill="#b07a45"/>
+    <path d="M -100 -200 l 150 0 a 40 40 0 0 1 40 40 l 0 20 l -190 0 z" fill="#d8d3cc"/>
+    <path d="M 90 -180 l 40 -30 l 0 70 z" fill="#b9b3ab"/>
+  </g>
+
+  <!-- Étagère -->
+  <rect x="120" y="680" width="784" height="64" rx="16" fill="url(#wood)"/>
+  <rect x="120" y="744" width="784" height="14" rx="7" fill="#000" opacity="0.25"/>
+  <path d="M 200 758 l 0 90 l 50 0 l 0 -40 z" fill="#8f5a2c"/>
+  <path d="M 824 758 l 0 90 l -50 0 l 0 -40 z" fill="#8f5a2c"/>
+</svg>
