@@ -639,38 +639,42 @@ async function cardState($: Dollar): Promise<CardState> {
 }
 
 // Fenêtre de mise à jour, en haut du panneau : les boutons d'abord, puis ce qui change.
+// Couleurs fixes, hors réglages et hors thème : un bandeau ambre se voit sur fond clair comme sur fond sombre.
+const UPDATE_BG = '#f2b705'
+const UPDATE_INK = '#2b1d00'
+
+// Un bouton du panneau garde son texte blanc quelle que soit la couleur demandée (vu à l'essai) :
+// il est posé sur une pastille foncée, où le blanc se lit.
+function updateButton($: Dollar, v: View, key: string, text: string, onPress: () => unknown, pill = UPDATE_INK) {
+  const { Box, Button, Text } = v.els
+  return (
+    <Box key={'pill-' + key} backgroundColor={pill} paddingX="sm">
+      <Button key={key} plain onPress={onPress}>
+        <Text weight="semibold" color="#ffffff">{text}</Text>
+      </Button>
+    </Box>
+  )
+}
+
 function updateBox($: Dollar, v: View, o: UpdateOffer) {
   const { Box, Text, Button } = v.els
-  const HOT = v.p.colors.hot
   return (
-    <Box key="update" flexDirection="column" gap="sm" borderStyle="round" borderColor={HOT} paddingX="sm" paddingY="xs">
+    <Box key="update" flexDirection="column" gap="sm" borderStyle="round" borderColor={UPDATE_BG} backgroundColor={UPDATE_BG} paddingX="sm" paddingY="xs">
       <Box flexDirection="row" justifyContent="space-between" alignItems="center" gap="sm" flexWrap="wrap">
-        <Text weight="bold">{v.t.updateTitle(o.from, o.to)}</Text>
+        <Text weight="bold" color={UPDATE_INK}>{v.t.updateTitle(o.from, o.to)}</Text>
         <Box flexDirection="row" gap="md">
-          {o.status === 'offered' && (
-            <Button key="update-install" onPress={() => installUpdate($)}>
-              {v.t.updateInstall}
-            </Button>
-          )}
-          {o.status === 'offered' && (
-            <Button key="update-ignore" plain onPress={() => ignoreUpdate($)}>
-              <Text weight="semibold">{v.t.updateIgnore}</Text>
-            </Button>
-          )}
-          {o.status === 'done' && (
-            <Button key="update-close" onPress={() => closeUpdate($)}>
-              OK
-            </Button>
-          )}
+          {o.status === 'offered' && updateButton($, v, 'update-install', v.t.updateInstall, () => installUpdate($))}
+          {o.status === 'offered' && updateButton($, v, 'update-ignore', v.t.updateIgnore, () => ignoreUpdate($), '#7a5a00')}
+          {o.status === 'done' && updateButton($, v, 'update-close', 'OK', () => closeUpdate($))}
         </Box>
       </Box>
-      {o.status === 'installing' && <Text dimColor>{v.t.updateInstalling}</Text>}
-      {o.status === 'done' && <Text color="success">{v.t.updateDone}</Text>}
+      {o.status === 'installing' && <Text color={UPDATE_INK}>{v.t.updateInstalling}</Text>}
+      {o.status === 'done' && <Text color={UPDATE_INK}>{v.t.updateDone}</Text>}
       {o.status === 'offered' && (
         <Box flexDirection="column">
-          <Text size="caption" weight="semibold" color="subtle">{v.t.updateWhatsNew.toUpperCase()}</Text>
-          {o.notes.length === 0 && <Text dimColor>{v.t.updateNoNotes}</Text>}
-          {o.notes.map((n, i) => <Text key={'note-' + i}>• {n}</Text>)}
+          <Text size="caption" weight="bold" color={UPDATE_INK}>{v.t.updateWhatsNew.toUpperCase()}</Text>
+          {o.notes.length === 0 && <Text color={UPDATE_INK}>{v.t.updateNoNotes}</Text>}
+          {o.notes.map((n, i) => <Text key={'note-' + i} color={UPDATE_INK}>• {n}</Text>)}
         </Box>
       )}
     </Box>

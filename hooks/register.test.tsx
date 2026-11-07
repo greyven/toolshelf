@@ -540,7 +540,12 @@ test('une version plus récente sur GitHub ouvre la fenêtre de mise à jour', a
     return { value: { status: 200, ok: true, headers: {}, text } }
   })
   const runs: string[][] = []
-  on('process.run', (_, e) => { runs.push([...e.argv]); return { value: { exitCode: 0, stdout: '', stderr: '' } } })
+  on('process.run', (_, e) => {
+    runs.push([...e.argv])
+    // Comme Claude Code, la mise à jour réécrit la version enregistrée.
+    if (e.argv[2] === 'update') files['C:/U/.claude/plugins/installed_plugins.json'] = JSON.stringify({ plugins: { 'toolshelf@toolshelf': [{ version: '0.6.0' }] } })
+    return { value: { exitCode: 0, stdout: '', stderr: '' } }
+  })
   on('session.start', (_, e) => ({ cwd: e.cwd }))
 
   await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })

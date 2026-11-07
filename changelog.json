@@ -1,5 +1,16 @@
 [
   {
+    "version": "0.5.2",
+    "fr": [
+      "La fenêtre de mise à jour a des couleurs fixes (fond ambre), visibles sur tous les thèmes.",
+      "Une mise à jour installée n'est plus reproposée, et une version non installée revient bien avec /tools ou ↻ Actualiser."
+    ],
+    "en": [
+      "The update window has fixed colors (amber background), visible on every theme.",
+      "An installed update is no longer offered again, and a version not yet installed comes back with /tools or ↻ Refresh."
+    ]
+  },
+  {
     "version": "0.5.1",
     "fr": ["/tools et ↻ Actualiser vérifient aussi s'il existe une nouvelle version, sans attendre une nouvelle conversation."],
     "en": ["/tools and ↻ Refresh also check for a new version, without waiting for a new conversation."]

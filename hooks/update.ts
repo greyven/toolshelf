@@ -55,12 +55,12 @@ export async function checkUpdate($: Dollar) {
   const to = remote?.version
   const p = (await read($, prefs)) ?? DEFAULTS
   if (typeof to !== 'string' || !isNewer(to, local.version) || p.ignoredUpdate === to) return
-  // Déjà installée dans cette discussion : le mod chargé reste l'ancien jusqu'à la suivante, on ne la repropose pas.
-  const current = await read($, offer)
-  if (current && current.to === to && current.status !== 'offered') return
-  const installed: Record<string, unknown> = (await readJson($, `${await claudeDir($)}/plugins/installed_plugins.json`))?.plugins ?? {}
+  const installed: Record<string, any> = (await readJson($, `${await claudeDir($)}/plugins/installed_plugins.json`))?.plugins ?? {}
   const key = Object.keys(installed).find(k => k.split('@')[0] === ME)
   if (!key) return
+  // Déjà installée (le mod chargé reste l'ancien jusqu'à /reload-plugins) : Claude Code en garde la version, on ne la repropose pas.
+  const recorded = installed[key]?.[0]?.version
+  if (typeof recorded === 'string' && !isNewer(to, recorded)) return
   const log: unknown = await fetchJson($, base + 'changelog.json')
   const notes = Array.isArray(log) ? notesBetween(log as ChangelogEntry[], local.version, to, p.lang) : []
   await update($, offer, () => ({ from: local.version, to, key, notes, status: 'offered' as const }))
