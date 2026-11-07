@@ -1,5 +1,10 @@
 [
   {
+    "version": "0.5.1",
+    "fr": ["Ceci est un test de la fenêtre de mise à jour."],
+    "en": ["This is a test of the update window."]
+  },
+  {
     "version": "0.5.0",
     "fr": [
       "Une fenêtre en haut du panneau prévient quand une nouvelle version est publiée, avec ce qui change, et l'installe d'un clic.",
