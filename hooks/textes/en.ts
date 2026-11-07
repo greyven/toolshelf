@@ -61,6 +61,8 @@ export const en: Textes = {
   pluginSummary: n => `${n} skills or commands`,
   inUse: '● In use: ',
   noneShown: 'No tool shown. Check some in ⚙ Settings.',
+  groupCount: n => `${n} tools`,
+  groupSummary: (on, n) => `${on} of ${n} enabled. Open it to see each tool.`,
 
   installedLater: 'Installed: available in new conversations.',
   pluginOff: 'Plugin disabled.',
@@ -71,6 +73,7 @@ export const en: Textes = {
 
   toggled: (id, on) => `${id} ${on ? 'enabled' : 'disabled'}: takes effect in new conversations.`,
   toggleFailed: (id, on) => `Could not ${on ? 'enable' : 'disable'} ${id}.`,
+  groupPartly: (id, on, done, n) => `${id}: ${done} of ${n} ${on ? 'enabled' : 'disabled'}, the others could not be.`,
   notHere: id => `${id} is provided by claude.ai or by the project: disable it in claude.ai (Settings, Capabilities) or in the project folder.`,
 
   suggestions: 'SUGGESTIONS',

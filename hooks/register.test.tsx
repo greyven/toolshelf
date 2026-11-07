@@ -459,3 +459,49 @@ test('les mots-clés d’une carte se modifient dans les réglages et changent l
   expect(JSON.parse(file!).prefs.keywords.fr['llm-council']).toBeUndefined()
   await ui.unmount()
 })
+
+test('un groupe réunit ses membres dans une carte, et sa case les bascule tous', async ($, on) => {
+  on('command.register', () => ({ value: { command: 'tools' } }))
+  on('ui.open', () => ({ value: { isPlaced: true } }))
+  on('ui.toast', () => ({ value: undefined }))
+  on('command.list', () => ({
+    value: ['animate', 'break-ui', 'llm-council'].map(name => ({ name, description: name, source: 'user' })),
+  }))
+  // Le fichier de groupes livré avec le mod, réduit à deux membres (les tests ne lisent pas le disque).
+  const files: Record<string, string> = {
+    'C:/U/fiches/groupes.json': JSON.stringify([{ id: 'Emil Kowalski', members: ['animate', 'break-ui', 'absent'] }]),
+  }
+  const norm = (p: string) => p.split(String.fromCharCode(92)).join('/')
+  const at = (p: string) => (norm(p).endsWith('/fiches/groupes.json') ? 'C:/U/fiches/groupes.json' : norm(p) in files ? norm(p) : undefined)
+  on('env.get', (_, e) => ({ value: e.name === 'OS' ? 'Windows_NT' : 'C:/U' }))
+  on('fs.exists', (_, e) => ({ value: !!at(e.path) || norm(e.path).endsWith('/skills') }))
+  on('fs.read', (_, e) => ({ value: files[at(e.path) ?? ''] ?? '' }))
+  on('fs.write', (_, e) => { files[norm(e.path)] = e.text; return { value: undefined } })
+  on('fs.list', (_, e) => ({ value: norm(e.path).endsWith('/skills') ? ['animate', 'break-ui', 'llm-council'].map(name => ({ name, kind: 'dir' })) : [] }))
+  on('store.get', () => ({ value: undefined }))
+  const runs: string[][] = []
+  on('process.run', (_, e) => { runs.push([...e.argv]); return { value: { exitCode: 0, stdout: '', stderr: '' } } })
+  on('session.start', (_, e) => ({ cwd: e.cwd }))
+
+  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
+  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  // Une seule carte pour le groupe, repliée ; llm-council garde la sienne.
+  expect(await ui.find({ type: 'Text', text: 'Emil Kowalski' })).toBeTruthy()
+  expect(await ui.find({ type: 'Text', text: 'llm-council' })).toBeTruthy()
+  expect(await ui.find({ type: 'Text', text: 'animate' })).toBeFalsy()
+  await ui.press({ key: 'groupe:Emil Kowalski' })
+  expect(await ui.find({ type: 'Text', text: 'animate' })).toBeTruthy()
+  // La case du groupe désactive ses deux membres, puis les réactive.
+  await ui.pointer({ type: 'down', x: 1, y: 0, button: 'left', in: 'chk-groupe:Emil Kowalski' })
+  expect(runs.length).toBe(2)
+  expect(runs.every(r => r.at(-1)!.includes('skills-desactives'))).toBe(true)
+  expect(await ui.find({ type: 'Text', text: /^désactivé$/ })).toBeTruthy()
+  await ui.pointer({ type: 'down', x: 1, y: 0, button: 'left', in: 'chk-groupe:Emil Kowalski' })
+  expect(runs.length).toBe(4)
+  // Dans les réglages, la case du groupe cache tous ses membres d'un coup.
+  await ui.press({ key: 'gear' })
+  await ui.press({ key: 'show-groupe:Emil Kowalski' })
+  const shared = Object.keys(files).find(k => k.endsWith('toolshelf-settings.json'))!
+  expect(JSON.parse(files[shared]!).prefs.hidden).toEqual(['animate', 'break-ui'])
+  await ui.unmount()
+})

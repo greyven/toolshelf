@@ -63,6 +63,8 @@ export const fr = {
   pluginSummary: (n: number) => `${n} skills ou commandes`,
   inUse: "● En cours d'utilisation : ",
   noneShown: 'Aucun outil affiché. Coche-en dans ⚙ Réglages.',
+  groupCount: (n: number) => `${n} outils`,
+  groupSummary: (on: number, n: number) => `${on} activés sur ${n}. Déplie pour voir chaque outil.`,
 
   // Recensement
   installedLater: 'Installé : disponible dans les nouvelles discussions.',
@@ -75,6 +77,8 @@ export const fr = {
   // Cases d'activation
   toggled: (id: string, on: boolean) => `${id} ${on ? 'activé' : 'désactivé'} : prend effet dans les nouvelles discussions.`,
   toggleFailed: (id: string, on: boolean) => `Impossible de ${on ? 'activer' : 'désactiver'} ${id}.`,
+  groupPartly: (id: string, on: boolean, done: number, n: number) =>
+    `${id} : ${done} sur ${n} ${on ? 'activés' : 'désactivés'}, les autres n'ont pas pu l'être.`,
   notHere: (id: string) =>
     `${id} est fourni par claude.ai ou par le projet : il se désactive dans claude.ai (Paramètres, Capacités) ou dans le dossier du projet.`,
 

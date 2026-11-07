@@ -10,8 +10,8 @@ import { infoOf, keywordsOf, literalKeyword, short } from './fiches'
 import { writeFiche } from './autofiche'
 import type { Dollar } from './files'
 import { reloadShared, setPrefs } from './shared'
-import { DEFAULTS } from './state'
-import { checkSvg, pickerSvg } from './svg'
+import { DEFAULTS, GROUP } from './state'
+import { type CheckState, checkSvg, pickerSvg } from './svg'
 import { LANG_NAMES, LANGS, type Lang, type Textes, textes } from './textes'
 
 const active = atom({ plugin: 'toolshelf', key: 'active' } as const, {})
@@ -22,6 +22,7 @@ const hot = atom({ plugin: 'toolshelf', key: 'hot' } as const, {})
 const kwOpen = atom({ plugin: 'toolshelf', key: 'kwOpen' } as const, null)
 const livrees = atom({ plugin: 'toolshelf', key: 'livrees' } as const, {})
 const open = atom({ plugin: 'toolshelf', key: 'open' } as const, null)
+const opened = atom({ plugin: 'toolshelf', key: 'opened' } as const, [])
 const picking = atom({ plugin: 'toolshelf', key: 'picking' } as const, null)
 const pickHsv = atom({ plugin: 'toolshelf', key: 'pickHsv' } as const, null)
 const prefs = atom({ plugin: 'toolshelf', key: 'prefs' } as const, DEFAULTS)
@@ -43,6 +44,32 @@ type View = {
   all: Found[]
   list: Found[]
   minRows: number
+  // Groupes dépliés (voir PluginState.opened).
+  opened: string[]
+}
+
+// Une entrée par outil hors groupe et une par groupe (ses membres réunis), triées par nom.
+type Entry = { id: string; tool?: Found; members: Found[] }
+
+function entries(list: Found[]): Entry[] {
+  const out = new Map<string, Entry>()
+  for (const f of list) {
+    if (!f.group) {
+      out.set(f.id, { id: f.id, tool: f, members: [] })
+      continue
+    }
+    const e = out.get(GROUP + f.group) ?? { id: f.group, members: [] }
+    e.members.push(f)
+    out.set(GROUP + f.group, e)
+  }
+  return [...out.values()].sort((a, b) => a.id.localeCompare(b.id))
+}
+
+// Les réglages ont leurs propres groupes dépliés, distincts de ceux du panneau.
+const IN_SETTINGS = 'reglages:'
+
+function toggleOpened($: Dollar, key: string) {
+  return update($, opened, o => ((o ?? []).includes(key) ? (o ?? []).filter(k => k !== key) : [...(o ?? []), key]))
 }
 
 function chip($: Dollar, v: View, t: Tint, text: string) {
@@ -262,23 +289,42 @@ function keywordEditor($: Dollar, v: View, id: string, words: string[], edited: 
   )
 }
 
-// Un outil par ligne ; un clic déplie ses mots-clés. Seuls les outils qui ont une fiche en ont.
-function keywordSettings($: Dollar, v: View, cards: Record<string, AutoInfo>, openId: string | null) {
+function keywordRow($: Dollar, v: View, f: Found, cards: Record<string, AutoInfo>, openId: string | null) {
   const { Box, Text, Button } = v.els
   const mine = v.p.keywords?.[v.p.lang] ?? {}
+  const words = mine[f.id] ?? keywordsOf(cards[f.id]!.trigger)
+  return (
+    <Box key={'kwrow-' + f.id} flexDirection="column" gap="xs">
+      <Button key={'kw-' + f.id} plain onPress={() => update($, kwOpen, o => (o === f.id ? null : f.id))}>
+        <Text>{openId === f.id ? '▾ ' : '▸ '}{f.id}</Text>
+        <Text dimColor> · {words.length}</Text>
+      </Button>
+      {openId === f.id && keywordEditor($, v, f.id, words, f.id in mine)}
+    </Box>
+  )
+}
+
+// Un outil par ligne, les groupes réunis sous leur nom ; un clic déplie les mots-clés. Seuls les outils qui ont une fiche en ont.
+function keywordSettings($: Dollar, v: View, cards: Record<string, AutoInfo>, openId: string | null) {
+  const { Box, Text, Button } = v.els
   return (
     <Box flexDirection="column" gap="xs">
       {heading($, v, v.t.keywords)}
       <Text size="caption" dimColor>{v.t.keywordsHelp}</Text>
-      {v.all.filter(f => cards[f.id]).map(f => {
-        const words = mine[f.id] ?? keywordsOf(cards[f.id]!.trigger)
+      {entries(v.all.filter(f => cards[f.id])).map(e => {
+        if (e.tool) return keywordRow($, v, e.tool, cards, openId)
+        const isOpen = v.opened.includes(IN_SETTINGS + e.id)
         return (
-          <Box key={'kwrow-' + f.id} flexDirection="column" gap="xs">
-            <Button key={'kw-' + f.id} plain onPress={() => update($, kwOpen, o => (o === f.id ? null : f.id))}>
-              <Text>{openId === f.id ? '▾ ' : '▸ '}{f.id}</Text>
-              <Text dimColor> · {words.length}</Text>
+          <Box key={'kwgrp-' + e.id} flexDirection="column" gap="xs">
+            <Button key={'kw-' + GROUP + e.id} plain onPress={() => toggleOpened($, IN_SETTINGS + e.id)}>
+              <Text weight="semibold">{isOpen ? '▾ ' : '▸ '}{e.id}</Text>
+              <Text dimColor> · {v.t.groupCount(e.members.length)}</Text>
             </Button>
-            {openId === f.id && keywordEditor($, v, f.id, words, f.id in mine)}
+            {isOpen && (
+              <Box flexDirection="column" gap="xs" paddingX="md">
+                {e.members.map(f => keywordRow($, v, f, cards, openId))}
+              </Box>
+            )}
           </Box>
         )
       })}
@@ -301,7 +347,25 @@ function shownToolsSettings($: Dollar, v: View) {
           <Text weight="semibold">{v.t.uncheckAll}</Text>
         </Button>
       </Box>
-      {all.map(f => settingCheck($, v, 'show-' + f.id, !p.hidden.includes(f.id), `${f.id}  (${v.t.kinds[f.kind]})`, () => toggleShown(f.id)))}
+      {entries(all).map(e => {
+        const row = (f: Found) => settingCheck($, v, 'show-' + f.id, !p.hidden.includes(f.id), `${f.id}  (${v.t.kinds[f.kind]})`, () => toggleShown(f.id))
+        if (e.tool) return row(e.tool)
+        const ids = e.members.map(f => f.id)
+        const allShown = ids.every(id => !p.hidden.includes(id))
+        const setGroupShown = () => setPrefs($, q => ({ ...q, hidden: allShown ? [...new Set([...q.hidden, ...ids])] : q.hidden.filter(h => !ids.includes(h)) }))
+        const isOpen = v.opened.includes(IN_SETTINGS + e.id)
+        return (
+          <Box key={'showgrp-' + e.id} flexDirection="column" gap="xs">
+            <Box flexDirection="row" gap="sm">
+              <Button key={'show-fold-' + e.id} plain onPress={() => toggleOpened($, IN_SETTINGS + e.id)}>
+                <Text>{isOpen ? '▾' : '▸'}</Text>
+              </Button>
+              {settingCheck($, v, 'show-' + GROUP + e.id, allShown, `${e.id}  (${v.t.groupCount(ids.length)})`, setGroupShown)}
+            </Box>
+            {isOpen && <Box flexDirection="column" gap="xs" paddingX="md">{e.members.map(row)}</Box>}
+          </Box>
+        )
+      })}
     </Box>
   )
 }
@@ -340,20 +404,33 @@ type CardState = {
 }
 
 // Case d'activation : image (bureau) avec une zone de clic transparente dessous, ou zone peinte (terminal).
-function activationBox($: Dollar, v: View, f: Found) {
+function checkBox($: Dollar, v: View, target: string, state: CheckState) {
   const { Box, Client } = v.els
   const { Svg } = v
-  if (f.kind === 'outil' || (f.kind === 'connecteur' && !f.key)) return null
-  if (!Svg) return <Client key={'chk-' + f.id} module="./check.tsx" props={{ target: f.id, checked: f.key ? f.enabled : true, locked: !f.key }} width={3} height={1} />
+  const checked = state !== 'off'
+  const locked = state === 'locked'
+  if (!Svg) return <Client key={'chk-' + target} module="./check.tsx" props={{ target, checked, locked }} width={3} height={1} />
   // Même montage que le sélecteur : image deux fois plus haute, moitié haute transparente, dans une boîte de hauteur 0.
   return (
     <Box flexDirection="column" width={3}>
       <Box width={3} height={0}>
-        <Svg source={checkSvg(!f.key ? 'locked' : f.enabled ? 'on' : 'off')} alt={f.enabled ? v.t.checkedAlt : v.t.uncheckedAlt} width={22} height={40} />
+        <Svg source={checkSvg(state)} alt={checked ? v.t.checkedAlt : v.t.uncheckedAlt} width={22} height={40} />
       </Box>
-      <Client key={'chk-' + f.id} module="./check.tsx" props={{ target: f.id, checked: f.enabled, locked: !f.key, blank: true }} width={3} height={1} />
+      <Client key={'chk-' + target} module="./check.tsx" props={{ target, checked, locked, blank: true }} width={3} height={1} />
     </Box>
   )
+}
+
+function activationBox($: Dollar, v: View, f: Found) {
+  if (f.kind === 'outil' || (f.kind === 'connecteur' && !f.key)) return null
+  return checkBox($, v, f.id, !f.key ? 'locked' : f.enabled ? 'on' : 'off')
+}
+
+// La case d'un groupe est cochée quand tous ses membres activables le sont.
+function groupState(members: Found[]): CheckState {
+  const keyed = members.filter(f => f.key)
+  if (keyed.length === 0) return 'locked'
+  return keyed.every(f => f.enabled) ? 'on' : 'off'
 }
 
 function cardTitleRow($: Dollar, v: View, f: Found, s: CardState, isHot: boolean, ink: string | undefined) {
@@ -449,6 +526,67 @@ function card($: Dollar, v: View, f: Found, s: CardState) {
   )
 }
 
+// Carte d'un membre de groupe : juste son nom et la flèche ; dépliée, la fiche complète.
+function memberCard($: Dollar, v: View, f: Found, s: CardState) {
+  const { Box, Text, Button } = v.els
+  const HOT = v.p.colors.hot
+  const HOT_INK = inkOn(HOT)
+  const isHot = !!s.activeMap[f.id]
+  const isSuggested = !isHot && !!s.hotMap[f.id]
+  const ink = isHot ? HOT_INK : undefined
+  const isOpen = s.openId === f.id
+  return (
+    <Box key={f.id} flexDirection="column" borderStyle="round" borderColor={isHot || isSuggested ? HOT : 'subtle'} backgroundColor={isHot ? HOT : undefined} paddingX="sm">
+      <Box flexDirection="row" alignItems="center" gap="sm" flexWrap="wrap">
+        <Button key={f.id} plain onPress={() => update($, open, o => (o === f.id ? null : f.id))}>
+          <Text color={isHot ? HOT_INK : 'subtle'}>{isOpen ? '▾ ' : '▸ '}</Text>
+          <Text weight="semibold" color={ink} dimColor={!f.enabled && !isHot}>{f.id}</Text>
+        </Button>
+        {!f.enabled && <Text size="caption" color={isHot ? HOT_INK : 'warning'}>{v.t.disabled}</Text>}
+        {s.usedMap[f.id] ? <Text size="caption" color={isHot ? HOT_INK : 'success'}>{v.t.used}</Text> : null}
+      </Box>
+      {isHot ? <Text color={HOT_INK} weight="semibold">{v.t.inUse}{s.activeMap[f.id]}</Text> : isSuggested && <Text color={HOT} weight="semibold">→ {s.hotMap[f.id]}</Text>}
+      {isOpen && <Text color={ink} dimColor={!isHot}>{infoOf(f.id, s.cards)?.what ?? short(f.desc)}</Text>}
+      {isOpen && cardDetails($, v, f, s, isHot, ink)}
+    </Box>
+  )
+}
+
+// Une carte pour tout un groupe : sa case active ou désactive tous ses membres ; dépliée, une petite carte par membre.
+// Repliée, elle signale quand même le membre en cours d'utilisation ou suggéré.
+function groupCard($: Dollar, v: View, e: Entry, s: CardState) {
+  const { Box, Text, Button } = v.els
+  const HOT = v.p.colors.hot
+  const isOpen = v.opened.includes(e.id)
+  const enabled = e.members.filter(f => f.enabled).length
+  const inUse = e.members.find(f => s.activeMap[f.id])
+  const suggested = e.members.filter(f => s.hotMap[f.id])
+  return (
+    <Box key={'grpbox-' + e.id} flexDirection="column" borderStyle="round" borderColor={inUse || suggested.length > 0 ? HOT : 'subtle'} hover={{ borderColor: 'text' }} paddingX="sm">
+      <Box flexDirection="row" alignItems="center" justifyContent="space-between" gap="sm">
+        <Box flexDirection="row" alignItems="center" gap="sm" flexWrap="wrap" flexShrink={1}>
+          <Button key={GROUP + e.id} plain onPress={() => toggleOpened($, e.id)}>
+            <Text color="subtle">{isOpen ? '▾ ' : '▸ '}</Text>
+            <Text size="body" weight="bold" dimColor={enabled === 0}>{e.id}</Text>
+          </Button>
+          <Text mono size="caption" color="subtle">{v.t.groupCount(e.members.length)}</Text>
+          {enabled === 0 && <Text size="caption" color="warning">{v.t.disabled}</Text>}
+          {e.members.some(f => s.usedMap[f.id]) && <Text size="caption" color="success">{v.t.used}</Text>}
+        </Box>
+        <Box paddingRight="xs">{checkBox($, v, GROUP + e.id, groupState(e.members))}</Box>
+      </Box>
+      <Text dimColor>{v.t.groupSummary(enabled, e.members.length)}</Text>
+      {!isOpen && inUse && <Text color={HOT} weight="semibold">{v.t.inUse}{inUse.id}</Text>}
+      {!isOpen && !inUse && suggested.length > 0 && <Text color={HOT} weight="semibold">→ {suggested.map(f => f.id).join(', ')}</Text>}
+      {isOpen && (
+        <Box flexDirection="column" gap="xs" paddingBottom="xs">
+          {e.members.map(f => memberCard($, v, f, s))}
+        </Box>
+      )}
+    </Box>
+  )
+}
+
 // Section pliable ; l'état plié est gardé dans les réglages communs.
 function section($: Dollar, v: View, s: CardState, kind: Found['kind'], items: Found[]) {
   const { Box, Text, Button } = v.els
@@ -461,7 +599,7 @@ function section($: Dollar, v: View, s: CardState, kind: Found['kind'], items: F
         <Text size="caption" color="subtle">{isFolded ? '▸ ' : '▾ '}</Text>
         <Text size="caption" weight="bold" color="subtle">{title.toUpperCase()} · {items.length}</Text>
       </Button>
-      {!isFolded && items.map(f => card($, v, f, s))}
+      {!isFolded && entries(items).map(e => (e.tool ? card($, v, e.tool, s) : groupCard($, v, e, s)))}
     </Box>
   )
 }
@@ -527,6 +665,7 @@ export async function renderPane($: Dollar, e: RenderEvent) {
     all,
     list: all.filter(f => !p.hidden.includes(f.id)),
     minRows: e.props.scroll.bodyRows,
+    opened: (await read($, opened)) ?? [],
   }
   return (await read($, settings)) ? settingsScreen($, v) : toolsScreen($, v)
 }

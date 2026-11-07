@@ -39,6 +39,7 @@ Le panneau s'ouvre au début de chaque discussion. La commande `/tools` le rouvr
 | Changer la langue, les couleurs, les mots-clés | ⚙ Réglages, dans le panneau |
 | Modifier ou ajouter une fiche livrée | `fiches/fr.json` et `fiches/en.json` |
 | Ajouter un programme du PC (Blender, Git…) | `fiches/outils-pc.json` : `{ "id": "Blender", "program": "blender" }` |
+| Réunir des outils dans une seule carte (même auteur…) | `fiches/groupes.json` : `{ "id": "Emil Kowalski", "members": ["animate", "break-ui"] }` |
 | Ajouter une langue | un fichier dans `hooks/textes/` sur le modèle de `en.ts`, la langue dans `types/index.d.ts`, et `fiches/<langue>.json` |
 
 Après une modification d'une fiche, **↻ Actualiser** suffit ; après une modification du code, `/reload-plugins`.
@@ -101,6 +102,7 @@ The panel opens at the start of each conversation. The `/tools` command reopens 
 | Change the language, colors, keywords | ⚙ Settings, in the panel |
 | Edit or add a shipped card | `fiches/en.json` and `fiches/fr.json` |
 | Add a computer program (Blender, Git…) | `fiches/outils-pc.json`: `{ "id": "Blender", "program": "blender" }` |
+| Gather tools into a single card (same author…) | `fiches/groupes.json`: `{ "id": "Emil Kowalski", "members": ["animate", "break-ui"] }` |
 | Add a language | a file in `hooks/textes/` modeled on `en.ts`, the language in `types/index.d.ts`, and `fiches/<language>.json` |
 
 After editing a card, **↻ Refresh** is enough; after editing the code, `/reload-plugins`.

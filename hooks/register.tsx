@@ -11,10 +11,10 @@ import { clearBand, registerBand } from './band'
 import type { Dollar } from './files'
 import { renderPane } from './pane'
 import { applyShared, migrateFromStore, reloadShared } from './shared'
-import { DEFAULTS, PANE } from './state'
+import { DEFAULTS, GROUP, PANE } from './state'
 import { textes } from './textes'
 import { suggestionsFor } from './suggest'
-import { toggleTool } from './toggle'
+import { toggleGroup, toggleTool } from './toggle'
 import { moduleOfCall, owner } from './usage'
 
 const active = atom({ plugin: 'toolshelf', key: 'active' } as const, {})
@@ -29,7 +29,14 @@ const used = atom({ plugin: 'toolshelf', key: 'used' } as const, {})
 type ClickMessage = { toggle?: string; open?: ColorTarget; target?: ColorTarget; hex?: string; zone?: 'sv' | 'hue'; fx?: number; fy?: number }
 
 async function onCheckClicked($: Dollar, id: string) {
-  const f = ((await read($, found)) ?? []).find(x => x.id === id)
+  const all = (await read($, found)) ?? []
+  if (id.startsWith(GROUP)) {
+    const group = id.slice(GROUP.length)
+    const members = all.filter(x => x.group === group)
+    if (members.some(x => x.key)) return toggleGroup($, group, members)
+    return $.ui.toast((await t($)).notHere(group))
+  }
+  const f = all.find(x => x.id === id)
   if (f?.key) await toggleTool($, f)
   else if (f) $.ui.toast((await t($)).notHere(f.id))
 }

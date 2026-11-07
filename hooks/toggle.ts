@@ -67,6 +67,22 @@ async function switchTool($: Dollar, f: Found & { key: string }, on: boolean) {
   return toggleSkill($, f.key, on)
 }
 
+// Tout le groupe d'un coup : tous activés → tous désactivés ; sinon, on active ceux qui ne le sont pas.
+export async function toggleGroup($: Dollar, group: string, members: Found[]) {
+  const on = !members.every(f => f.enabled)
+  const done: string[] = []
+  for (const f of members) {
+    if (!f.key || f.enabled === on) continue
+    try {
+      if (await switchTool($, { ...f, key: f.key }, on)) done.push(f.id)
+    } catch {}
+  }
+  await update($, found, list => list.map(x => (done.includes(x.id) ? { ...x, enabled: on } : x)))
+  const t = textes(((await read($, prefs)) ?? DEFAULTS).lang)
+  const todo = members.filter(f => f.key && f.enabled !== on).length
+  $.ui.toast(done.length === todo ? t.toggled(group, on) : t.groupPartly(group, on, done.length, todo))
+}
+
 export async function toggleTool($: Dollar, f: Found) {
   if (!f.key) return
   const on = !f.enabled

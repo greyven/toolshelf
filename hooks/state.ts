@@ -7,6 +7,8 @@ import { systemLang } from './textes'
 
 export const ME = 'toolshelf'
 export const PANE = 'outils'
+// Cible de la case d'activation d'un groupe : ce préfixe suivi du nom du groupe.
+export const GROUP = 'groupe:'
 
 export const DEFAULTS: Prefs = {
   lang: systemLang(),

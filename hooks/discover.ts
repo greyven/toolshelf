@@ -1,7 +1,7 @@
 // L'inventaire des outils : il vient de Claude Code et des fichiers du profil, sans liste écrite à la main.
 import { atom, read, update } from 'claude-code'
 
-import type { AutoInfo, Found, PcTool } from '../types'
+import type { AutoInfo, Found, PcTool, ToolGroup } from '../types'
 
 import { fillMissing } from './autofiche'
 import { claudeDir, type Dollar, homeDir, listDirs, listNames, readJson, reservePath } from './files'
@@ -123,6 +123,23 @@ async function addPcTools($: Dollar, t: Textes, groups: Groups, tools: PcTool[])
   }
 }
 
+const GROUPS_FILE = 'fiches/groupes.json'
+
+function isToolGroup(g: unknown): g is ToolGroup {
+  const o = g as ToolGroup
+  return !!o && typeof o.id === 'string' && o.id.length > 0 && Array.isArray(o.members)
+}
+
+// Chaque membre trouvé reçoit le nom de son groupe ; un outil absent du PC est simplement ignoré.
+function markGroups(groups: Groups, list: ToolGroup[]) {
+  for (const g of list) {
+    for (const id of g.members) {
+      const f = groups.get(id)
+      if (f) f.group = g.id
+    }
+  }
+}
+
 export async function discover($: Dollar) {
   const home = await homeDir($)
   const dir = await claudeDir($)
@@ -141,6 +158,8 @@ export async function discover($: Dollar) {
   addConnectors(t, groups, await loadedServers($), await serverLabels($), userMcp, reserve)
   const pcTools: unknown = await readJson($, `${$.plugin.root}/${PC_TOOLS_FILE}`)
   await addPcTools($, t, groups, Array.isArray(pcTools) ? pcTools.filter(isPcTool) : [])
+  const toolGroups: unknown = await readJson($, `${$.plugin.root}/${GROUPS_FILE}`)
+  markGroups(groups, Array.isArray(toolGroups) ? toolGroups.filter(isToolGroup) : [])
 
   await update($, found, () => [...groups.values()].sort((a, b) => a.id.localeCompare(b.id)))
   // Relu à chaque recensement : ↻ Actualiser suffit après une modification du répertoire de fiches.
