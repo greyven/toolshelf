@@ -10,7 +10,7 @@ Un panneau pour Claude Code qui montre **tous tes outils au même endroit** : pl
 
 ## Ce qu'il fait
 
-- **Recense tes outils** tout seul, sans liste à tenir à jour : plugins, skills personnels, connecteurs (y compris ceux de claude.ai) et programmes du PC décrits dans `fiches/outils-pc.json`. Un outil que tu viens d'installer apparaît dès la conversation suivante (ou tout de suite avec ↻ Actualiser).
+- **Recense tes outils** tout seul, sans liste à tenir à jour : plugins, skills personnels, connecteurs (y compris ceux de claude.ai) et programmes du PC décrits dans `fiches/outils-pc.json`. Un outil que tu viens d'installer apparaît dès la conversation suivante, ou tout de suite avec `/reload-plugins` puis ↻ Actualiser.
 - **S'affiche tout seul** au début de chaque conversation ; sinon, la commande `/tools` le rouvre.
 - **Une fiche par outil** : ce qu'il fait, son mode d'emploi, pourquoi et quand s'en servir, des exemples. Sept fiches sont livrées ; pour les autres outils, une fiche est rédigée automatiquement par un petit modèle (Haiku).
 - **Suggestions pendant la frappe** : une bande au-dessus de la zone de saisie propose les outils utiles pour ce que tu es en train d'écrire, d'après leur nom et leurs mots-clés.
@@ -42,7 +42,7 @@ Le panneau s'ouvre au début de chaque discussion. La commande `/tools` le rouvr
 | Réunir des outils dans une seule carte (même auteur…) | `fiches/groupes.json` : `{ "id": "Emil Kowalski", "members": ["animate", "break-ui"] }` |
 | Ajouter une langue | un fichier dans `hooks/textes/` sur le modèle de `en.ts`, la langue dans `types/index.d.ts`, et `fiches/<langue>.json` |
 
-Après une modification d'une fiche, **↻ Actualiser** suffit ; après une modification du code, `/reload-plugins`.
+**↻ Actualiser** (ou `/tools`) relit ce qui est installé (plugins, skills, connecteurs, programmes du PC) et les fiches, puis met le panneau à jour. Il ne recharge pas les plugins eux-mêmes : Claude Code réserve `/reload-plugins` à une commande tapée par toi. Après une installation, une mise à jour ou une modification du code d'un plugin, tape d'abord `/reload-plugins`, puis clique sur ↻ Actualiser. Après une modification d'une fiche, ↻ Actualiser suffit.
 
 Tes réglages et les fiches rédigées automatiquement sont gardés dans `~/.claude/toolshelf-settings.json`.
 
@@ -73,7 +73,7 @@ A panel for Claude Code that shows **all your tools in one place**: plugins, ski
 
 ## What it does
 
-- **Lists your tools** on its own, with no list to maintain: plugins, personal skills, connectors (claude.ai ones included) and computer programs described in `fiches/outils-pc.json`. A tool you just installed shows up from the next conversation (or right away with ↻ Refresh).
+- **Lists your tools** on its own, with no list to maintain: plugins, personal skills, connectors (claude.ai ones included) and computer programs described in `fiches/outils-pc.json`. A tool you just installed shows up from the next conversation, or right away with `/reload-plugins` then ↻ Refresh.
 - **Opens on its own** at the start of each conversation; otherwise, the `/tools` command reopens it.
 - **One card per tool**: what it does, how to use it, why and when, examples. Seven cards are shipped; for other tools, a card is written automatically by a small model (Haiku).
 - **Suggestions while you type**: a band above the prompt suggests the tools that fit what you are writing, from their name and keywords.
@@ -105,7 +105,7 @@ The panel opens at the start of each conversation. The `/tools` command reopens 
 | Gather tools into a single card (same author…) | `fiches/groupes.json`: `{ "id": "Emil Kowalski", "members": ["animate", "break-ui"] }` |
 | Add a language | a file in `hooks/textes/` modeled on `en.ts`, the language in `types/index.d.ts`, and `fiches/<language>.json` |
 
-After editing a card, **↻ Refresh** is enough; after editing the code, `/reload-plugins`.
+**↻ Refresh** (or `/tools`) re-reads what is installed (plugins, skills, connectors, computer programs) and the cards, then updates the panel. It does not reload the plugins themselves: Claude Code keeps `/reload-plugins` for a command you type yourself. After installing, updating or editing the code of a plugin, type `/reload-plugins` first, then click ↻ Refresh. After editing a card, ↻ Refresh is enough.
 
 Your settings and the automatically written cards are kept in `~/.claude/toolshelf-settings.json`.
 
