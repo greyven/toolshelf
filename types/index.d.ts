@@ -29,7 +29,7 @@ export type AutoInfo = {
 export type ChangelogEntry = { version: string } & Partial<Record<Lang, string[]>>
 
 // Une version plus récente publiée sur GitHub : de quelle version à laquelle, le nom d'installation, et ce qui change.
-export type UpdateOffer = { from: string; to: string; key: string; notes: string[]; status: 'offered' | 'installing' | 'done' }
+export type UpdateOffer = { from: string; to: string; key: string; notes: string[]; status: 'offered' | 'installing' | 'done' | 'closed' }
 
 // Langues traduites : hooks/textes/<langue>.ts et fiches/<langue>.json.
 export type Lang = 'fr' | 'en'

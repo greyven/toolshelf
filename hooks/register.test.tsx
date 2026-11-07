@@ -555,5 +555,10 @@ test('une version plus récente sur GitHub ouvre la fenêtre de mise à jour', a
   expect(runs.at(-1)!.slice(1)).toEqual(['plugin', 'update', 'toolshelf@toolshelf', '--scope', 'user'])
   await ui.press({ key: 'update-close' })
   expect(await ui.find({ type: 'Text', text: /0\.5\.0 → 0\.6\.0/ })).toBeFalsy()
+  // ↻ Actualiser revérifie GitHub, sans reproposer la version déjà installée.
+  const before = urls.length
+  await ui.press({ key: 'refresh' })
+  expect(urls.length).toBeGreaterThan(before)
+  expect(await ui.find({ type: 'Text', text: /0\.5\.0 → 0\.6\.0/ })).toBeFalsy()
   await ui.unmount()
 })

@@ -1,8 +1,8 @@
 [
   {
     "version": "0.5.1",
-    "fr": ["Ceci est un test de la fenêtre de mise à jour."],
-    "en": ["This is a test of the update window."]
+    "fr": ["/tools et ↻ Actualiser vérifient aussi s'il existe une nouvelle version, sans attendre une nouvelle conversation."],
+    "en": ["/tools and ↻ Refresh also check for a new version, without waiting for a new conversation."]
   },
   {
     "version": "0.5.0",

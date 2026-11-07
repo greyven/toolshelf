@@ -99,6 +99,7 @@ export const register: Register = (on, options) => {
     await reloadShared($)
     await discover($)
     await openPane($)
+    void checkUpdate($).catch(() => {})
     return { text: (await t($)).commandDone }
   })
 

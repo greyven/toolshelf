@@ -12,7 +12,7 @@ import type { Dollar } from './files'
 import { reloadShared, setPrefs } from './shared'
 import { DEFAULTS, GROUP } from './state'
 import { type CheckState, checkSvg, pickerSvg } from './svg'
-import { closeUpdate, ignoreUpdate, installUpdate } from './update'
+import { checkUpdate, closeUpdate, ignoreUpdate, installUpdate } from './update'
 import { LANG_NAMES, LANGS, type Lang, type Textes, textes } from './textes'
 
 const active = atom({ plugin: 'toolshelf', key: 'active' } as const, {})
@@ -94,7 +94,7 @@ function header($: Dollar, v: View, isSettings: boolean) {
       </Text>
       <Box flexDirection="row" gap="md">
         {!isSettings && (
-          <Button key="refresh" plain onPress={async () => { await reloadShared($); await discover($); $.ui.toast(v.t.refreshed) }}>
+          <Button key="refresh" plain onPress={async () => { await reloadShared($); await discover($); $.ui.toast(v.t.refreshed); await checkUpdate($) }}>
             <Text weight="semibold">{v.t.refresh}</Text>
           </Button>
         )}
@@ -683,7 +683,7 @@ async function toolsScreen($: Dollar, v: View) {
   const o = await read($, offer)
   return (
     <Box flexDirection="column" gap="md" paddingX="xs" backgroundColor={v.p.bg ?? undefined} minHeight={v.minRows}>
-      {o && updateBox($, v, o)}
+      {o && o.status !== 'closed' && updateBox($, v, o)}
       {header($, v, false)}
       {v.p.legend && legend($, v)}
       {SECTIONS.map(kind => {

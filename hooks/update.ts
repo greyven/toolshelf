@@ -55,6 +55,9 @@ export async function checkUpdate($: Dollar) {
   const to = remote?.version
   const p = (await read($, prefs)) ?? DEFAULTS
   if (typeof to !== 'string' || !isNewer(to, local.version) || p.ignoredUpdate === to) return
+  // Déjà installée dans cette discussion : le mod chargé reste l'ancien jusqu'à la suivante, on ne la repropose pas.
+  const current = await read($, offer)
+  if (current && current.to === to && current.status !== 'offered') return
   const installed: Record<string, unknown> = (await readJson($, `${await claudeDir($)}/plugins/installed_plugins.json`))?.plugins ?? {}
   const key = Object.keys(installed).find(k => k.split('@')[0] === ME)
   if (!key) return
@@ -85,6 +88,7 @@ export async function ignoreUpdate($: Dollar) {
   await update($, offer, () => null)
 }
 
+// Fermée mais gardée : ↻ Actualiser ne repropose pas la version que l'on vient d'installer.
 export async function closeUpdate($: Dollar) {
-  await update($, offer, () => null)
+  await update($, offer, x => (x ? { ...x, status: 'closed' as const } : x))
 }
