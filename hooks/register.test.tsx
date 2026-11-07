@@ -2,6 +2,7 @@ import { expect, test } from 'claude-code/testing'
 
 import { keywordsOf, literalKeyword, withKeywords } from './fiches'
 import { suggestionsFor } from './suggest'
+import { isNewer, notesBetween } from './update'
 
 // Le répertoire de fiches livré avec le mod, réduit à deux fiches recopiées de fiches/fr.json (les tests ne lisent pas le disque).
 const DECK = {"llm-council": {"mode": "actif", "what": "Faire débattre cinq conseillers IA sur une décision", "how": "Tu le lances avec une phrase déclencheur. Claude peut aussi le proposer seul sur un vrai choix. Onze appels de modèle par session ; écrit un rapport HTML et une transcription dans le dossier.", "why": "Tester un choix important contre la complaisance d'une réponse unique.", "when": "Vraie décision avec enjeux et plusieurs options, pas une question factuelle.", "ex": ["council this : PHP pur ou framework pour ce projet ?", "pressure-test this : mon plan en trois pages", "debate this : SQL ou fichiers JSON"], "trigger": "(dois-je|devrais-je|choisir|choix entre|hésite|quelle option|plutôt|ou bien|\\bvs\\b|versus|meilleure? (option|solution|approche)|décision|décider|trancher|conseil)", "hint": "Décision à trancher : « council this : … »."}, "ponytail": {"mode": "mixte", "what": "Écrire le moins de code possible", "how": "Passif : une fois activé, il s'applique tout seul à chaque réponse de code. Actif : les commandes de revue et d'audit se lancent à la main.\nNiveaux, à choisir dans sa bande au-dessus de la saisie ou avec /ponytail:ponytail <niveau> :\n• off : éteint, Claude travaille normalement.\n• lite : construit ce qui est demandé tel quel, et signale en une ligne une version plus simple si elle existe.\n• full (par défaut) : la plus petite modification qui résout entièrement le problème, sans option, abstraction ni dépendance non demandées.\n• ultra : comme full, et remet aussi en question la demande elle-même avant de construire.\nÀ tous les niveaux, rien de ce qui est demandé n'est sauté, ni la sécurité, ni ce qui protège les données.", "why": "Éviter le code superflu, les abstractions inutiles et les dépendances ajoutées pour quelques lignes.", "when": "Dès que tu écris, corriges ou refactores du code.", "ex": ["/ponytail:ponytail full   (lite, ultra, off)", "/ponytail:ponytail-review", "/ponytail:ponytail-audit", "/ponytail:ponytail-debt"], "trigger": "\\b(code|fonction|bug|corrig|refactor|simplifi|écri[st]|ajout|implémen|script|classe|méthode)", "hint": "Tu vas toucher du code : ponytail garde le changement minimal."}}
@@ -122,7 +123,7 @@ test('liste, surlignage et usage', async ($, on) => {
 })
 
 // Les fiches sont rédigées en arrière-plan : on attend que le nombre d'appels au modèle soit atteint.
-const until = async (ok: () => boolean) => { for (let i = 0; i < 100 && !ok(); i++) await new Promise(r => setTimeout(r, 10)) }
+const until = async (ok: () => boolean | Promise<boolean>) => { for (let i = 0; i < 100 && !(await ok()); i++) await new Promise(r => setTimeout(r, 10)) }
 
 test('fiche automatique et rafraîchissement par /tools', async ($, on) => {
   on('command.register', () => ({ value: { command: 'tools' } }))
@@ -503,5 +504,56 @@ test('un groupe réunit ses membres dans une carte, et sa case les bascule tous'
   await ui.press({ key: 'show-groupe:Emil Kowalski' })
   const shared = Object.keys(files).find(k => k.endsWith('toolshelf-settings.json'))!
   expect(JSON.parse(files[shared]!).prefs.hidden).toEqual(['animate', 'break-ui'])
+  await ui.unmount()
+})
+
+test('les versions se comparent nombre par nombre, et le journal donne ce qui change', async () => {
+  expect(isNewer('0.10.0', '0.9.9')).toBe(true)
+  expect(isNewer('0.5.0', '0.5.0')).toBe(false)
+  expect(isNewer('1.0', '1.0.1')).toBe(false)
+  const log = [{ version: '0.4.0', fr: ['vieux'] }, { version: '0.5.0', fr: ['a'] }, { version: '0.6.0', fr: ['b'], en: ['B'] }, { version: '0.7.0', fr: ['futur'] }]
+  expect(notesBetween(log, '0.4.0', '0.6.0', 'fr')).toEqual(['0.6.0 · b', '0.5.0 · a'])
+  expect(notesBetween(log, '0.5.0', '0.6.0', 'en')).toEqual(['0.6.0 · B'])
+})
+
+test('une version plus récente sur GitHub ouvre la fenêtre de mise à jour', async ($, on) => {
+  on('command.register', () => ({ value: { command: 'tools' } }))
+  on('ui.open', () => ({ value: { isPlaced: true } }))
+  on('ui.toast', () => ({ value: undefined }))
+  on('command.list', () => ({ value: [] }))
+  const norm = (p: string) => p.split(String.fromCharCode(92)).join('/')
+  const files: Record<string, string> = {
+    'C:/U/.claude/plugins/installed_plugins.json': JSON.stringify({ plugins: { 'toolshelf@toolshelf': [{}] } }),
+  }
+  const local = JSON.stringify({ version: '0.5.0', repository: 'https://github.com/greyven/toolshelf' })
+  const read = (p: string) => (norm(p).endsWith('/.claude-plugin/plugin.json') ? local : files[norm(p)])
+  on('env.get', (_, e) => ({ value: e.name === 'OS' ? 'Windows_NT' : 'C:/U' }))
+  on('fs.exists', (_, e) => ({ value: read(e.path) !== undefined }))
+  on('fs.read', (_, e) => ({ value: read(e.path) ?? '' }))
+  on('fs.write', (_, e) => { files[norm(e.path)] = e.text; return { value: undefined } })
+  on('fs.list', () => ({ value: [] }))
+  on('store.get', () => ({ value: undefined }))
+  const urls: string[] = []
+  on('http.fetch', (_, e) => {
+    urls.push(e.url)
+    const text = e.url.endsWith('plugin.json') ? JSON.stringify({ version: '0.6.0' }) : JSON.stringify([{ version: '0.6.0', fr: ['Nouveauté'] }])
+    return { value: { status: 200, ok: true, headers: {}, text } }
+  })
+  const runs: string[][] = []
+  on('process.run', (_, e) => { runs.push([...e.argv]); return { value: { exitCode: 0, stdout: '', stderr: '' } } })
+  on('session.start', (_, e) => ({ cwd: e.cwd }))
+
+  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
+  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  await until(async () => !!(await ui.find({ type: 'Text', text: /0\.5\.0 → 0\.6\.0/ })))
+  expect(urls[0]).toBe('https://raw.githubusercontent.com/greyven/toolshelf/main/.claude-plugin/plugin.json')
+  expect(await ui.find({ type: 'Text', text: /0\.6\.0 · Nouveauté/ })).toBeTruthy()
+  // Installer : la marketplace est rafraîchie, puis le mod mis à jour.
+  await ui.press({ key: 'update-install' })
+  await until(async () => !!(await ui.find({ type: 'Text', text: /Mise à jour installée/ })))
+  expect(runs.at(-2)!.slice(1)).toEqual(['plugin', 'marketplace', 'update', 'toolshelf'])
+  expect(runs.at(-1)!.slice(1)).toEqual(['plugin', 'update', 'toolshelf@toolshelf', '--scope', 'user'])
+  await ui.press({ key: 'update-close' })
+  expect(await ui.find({ type: 'Text', text: /0\.5\.0 → 0\.6\.0/ })).toBeFalsy()
   await ui.unmount()
 })

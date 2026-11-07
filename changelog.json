@@ -1,0 +1,29 @@
+[
+  {
+    "version": "0.5.0",
+    "fr": [
+      "Une fenêtre en haut du panneau prévient quand une nouvelle version est publiée, avec ce qui change, et l'installe d'un clic.",
+      "Le README explique ce que fait ↻ Actualiser et quand taper /reload-plugins d'abord."
+    ],
+    "en": [
+      "A window at the top of the panel tells you when a new version is published, shows what changes, and installs it in one click.",
+      "The README explains what ↻ Refresh does and when to type /reload-plugins first."
+    ]
+  },
+  {
+    "version": "0.4.0",
+    "fr": [
+      "Des outils d'un même auteur peuvent être réunis dans une seule carte, avec une case pour tous les activer ou désactiver (fiches/groupes.json).",
+      "Les réglages regroupent ces outils de la même façon, pour l'affichage et pour les mots-clés."
+    ],
+    "en": [
+      "Tools by the same author can be gathered into a single card, with one checkbox to enable or disable them all (fiches/groupes.json).",
+      "Settings group these tools the same way, for display and for keywords."
+    ]
+  },
+  {
+    "version": "0.3.1",
+    "fr": ["La commande du panneau s'appelle maintenant /tools."],
+    "en": ["The panel command is now /tools."]
+  }
+]

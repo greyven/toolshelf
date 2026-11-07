@@ -15,6 +15,7 @@ import { DEFAULTS, GROUP, PANE } from './state'
 import { textes } from './textes'
 import { suggestionsFor } from './suggest'
 import { toggleGroup, toggleTool } from './toggle'
+import { checkUpdate } from './update'
 import { moduleOfCall, owner } from './usage'
 
 const active = atom({ plugin: 'toolshelf', key: 'active' } as const, {})
@@ -90,6 +91,7 @@ export const register: Register = (on, options) => {
     await $.command.register({ name: 'tools', description: (await t($)).commandDescription })
     await discover($)
     void openPane($)
+    void checkUpdate($).catch(() => {}) // en arrière-plan : la fenêtre apparaît quand GitHub a répondu
     return next(e)
   })
 

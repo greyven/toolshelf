@@ -25,6 +25,12 @@ export type AutoInfo = {
   hint: string
 }
 
+// Une version du mod dans changelog.json : ce qui change, par langue.
+export type ChangelogEntry = { version: string } & Partial<Record<Lang, string[]>>
+
+// Une version plus récente publiée sur GitHub : de quelle version à laquelle, le nom d'installation, et ce qui change.
+export type UpdateOffer = { from: string; to: string; key: string; notes: string[]; status: 'offered' | 'installing' | 'done' }
+
 // Langues traduites : hooks/textes/<langue>.ts et fiches/<langue>.json.
 export type Lang = 'fr' | 'en'
 
@@ -37,6 +43,8 @@ export type Prefs = {
   hidden: string[]
   // Mots-clés de déclenchement modifiés par l'utilisateur, par langue puis par outil ; ils remplacent ceux de la fiche.
   keywords?: Partial<Record<Lang, Record<string, string[]>>>
+  // Version proposée puis ignorée : la fenêtre ne revient qu'avec une version plus récente.
+  ignoredUpdate?: string
 }
 
 declare module 'claude-code' {
@@ -59,6 +67,8 @@ declare module 'claude-code' {
       kwOpen: string | null
       // Groupes dépliés : dans le panneau (nom du groupe) et dans les réglages (« reglages: » + nom).
       opened: string[]
+      // Mise à jour proposée dans la fenêtre en haut du panneau (update.ts).
+      update: UpdateOffer | null
       // Bande de suggestions (band.tsx) : texte en cours de frappe, et nombre de frappes reçues (gardé pour plus tard).
       draft: string
       draftEdits: number

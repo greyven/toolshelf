@@ -76,6 +76,15 @@ export const en: Textes = {
   groupPartly: (id, on, done, n) => `${id}: ${done} of ${n} ${on ? 'enabled' : 'disabled'}, the others could not be.`,
   notHere: id => `${id} is provided by claude.ai or by the project: disable it in claude.ai (Settings, Capabilities) or in the project folder.`,
 
+  updateTitle: (from, to) => `toolshelf update available: ${from} → ${to}`,
+  updateInstall: '⬇ Install',
+  updateIgnore: 'Ignore',
+  updateWhatsNew: "What's new",
+  updateNoNotes: 'No details published for this version.',
+  updateInstalling: 'Installing…',
+  updateDone: 'Update installed. It will be active in new conversations, or right away if you type /reload-plugins.',
+  updateFailed: 'The update could not be installed. You can do it with /plugin in Claude Code.',
+
   suggestions: 'SUGGESTIONS',
   ruleAlt: 'Separator between ponytail and the suggestions',
 

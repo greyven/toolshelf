@@ -16,6 +16,7 @@ Un panneau pour Claude Code qui montre **tous tes outils au même endroit** : pl
 - **Suggestions pendant la frappe** : une bande au-dessus de la zone de saisie propose les outils utiles pour ce que tu es en train d'écrire, d'après leur nom et leurs mots-clés.
 - **Montre quels outils Claude utilise** pour traiter ta demande : l'outil en cours d'utilisation est surligné dans le panneau.
 - **Cases à cocher** pour activer ou désactiver un plugin, un skill personnel ou un connecteur, sans rien supprimer.
+- **Mises à jour** : quand une nouvelle version est publiée, une fenêtre en haut du panneau le signale, montre ce qui change et l'installe d'un clic (ou se fait oublier jusqu'à la version suivante).
 - **Réglages** (⚙) : langue (français ou anglais), couleurs, légende, outils affichés, et mots-clés de déclenchement de chaque outil.
 
 Pensé pour l'onglet Code de l'application de bureau Claude ; il s'affiche aussi dans Claude Code au terminal. Prévu pour Windows, macOS et Linux (testé surtout sous Windows).
@@ -55,7 +56,7 @@ Je ne serai pas en mesure de relire et de garantir chaque proposition de code en
 - **Les propositions directes (*pull requests*) sont bienvenues**, mais elles peuvent attendre longtemps ou ne jamais être fusionnées si je ne peux pas en juger la sûreté. Ce n'est pas un refus de votre travail : votre copie reste le meilleur endroit pour le partager.
 - Si une personne de confiance souhaite **aider à maintenir** le projet, elle est la bienvenue : dites-le dans une *issue*.
 
-**Sécurité.** Ce mod exécute du code sur votre ordinateur (il lit vos fichiers de configuration Claude et peut déplacer des dossiers de skills). Comme pour tout plugin, lisez le code d'une copie avant de l'installer.
+**Sécurité.** Ce mod exécute du code sur votre ordinateur (il lit vos fichiers de configuration Claude et peut déplacer des dossiers de skills). Au début de chaque discussion, il lit aussi `plugin.json` et `changelog.json` sur ce dépôt GitHub pour savoir si une nouvelle version existe : rien n'est envoyé. Comme pour tout plugin, lisez le code d'une copie avant de l'installer.
 
 ## Licence
 
@@ -79,6 +80,7 @@ A panel for Claude Code that shows **all your tools in one place**: plugins, ski
 - **Suggestions while you type**: a band above the prompt suggests the tools that fit what you are writing, from their name and keywords.
 - **Shows which tools Claude uses** to handle your request: the tool in use is highlighted in the panel.
 - **Checkboxes** to enable or disable a plugin, a personal skill or a connector, without deleting anything.
+- **Updates**: when a new version is published, a window at the top of the panel says so, shows what changes and installs it in one click (or stays quiet until the next version).
 - **Settings** (⚙): language (French or English), colors, legend, shown tools, and each tool's trigger keywords.
 
 Designed for the Code tab of the Claude desktop app; it also shows in Claude Code in the terminal. Meant for Windows, macOS and Linux (tested mostly on Windows).
@@ -118,7 +120,7 @@ I will not be able to review and vouch for every code contribution sent to this 
 - **Pull requests are welcome**, but they may wait a long time or never be merged if I cannot judge whether they are safe. This is not a rejection of your work: your fork remains the best place to share it.
 - If someone trustworthy would like to **help maintain** the project, they are welcome: say so in an *issue*.
 
-**Security.** This mod runs code on your computer (it reads your Claude configuration files and can move skill folders). As with any plugin, read the code of a fork before installing it.
+**Security.** This mod runs code on your computer (it reads your Claude configuration files and can move skill folders). At the start of each conversation it also reads `plugin.json` and `changelog.json` from this GitHub repository to know whether a new version exists: nothing is sent. As with any plugin, read the code of a fork before installing it.
 
 ## License
 

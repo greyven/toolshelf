@@ -82,6 +82,16 @@ export const fr = {
   notHere: (id: string) =>
     `${id} est fourni par claude.ai ou par le projet : il se désactive dans claude.ai (Paramètres, Capacités) ou dans le dossier du projet.`,
 
+  // Fenêtre de mise à jour
+  updateTitle: (from: string, to: string) => `Mise à jour de toolshelf disponible : ${from} → ${to}`,
+  updateInstall: '⬇ Installer',
+  updateIgnore: 'Ignorer',
+  updateWhatsNew: 'Ce qui change',
+  updateNoNotes: 'Pas de détail publié pour cette version.',
+  updateInstalling: 'Installation en cours…',
+  updateDone: 'Mise à jour installée. Elle sera active dans les nouvelles conversations, ou tout de suite si tu tapes /reload-plugins.',
+  updateFailed: "La mise à jour n'a pas pu être installée. Tu peux la faire avec /plugin dans Claude Code.",
+
   // Bande de suggestions
   suggestions: 'SUGGESTIONS',
   ruleAlt: 'Séparation entre ponytail et les suggestions',

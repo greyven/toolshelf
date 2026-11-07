@@ -1,7 +1,7 @@
 // Le dessin du panneau : en-tête, liste des cartes par section, et écran des réglages.
 import { atom, read, update } from 'claude-code'
 
-import type { AutoInfo, Found, Prefs, Tint } from '../types'
+import type { AutoInfo, Found, Prefs, Tint, UpdateOffer } from '../types'
 
 import { type ColorTarget, togglePicker, typeHex } from './colorpick'
 import { inkOn, isHex } from './colors'
@@ -12,6 +12,7 @@ import type { Dollar } from './files'
 import { reloadShared, setPrefs } from './shared'
 import { DEFAULTS, GROUP } from './state'
 import { type CheckState, checkSvg, pickerSvg } from './svg'
+import { closeUpdate, ignoreUpdate, installUpdate } from './update'
 import { LANG_NAMES, LANGS, type Lang, type Textes, textes } from './textes'
 
 const active = atom({ plugin: 'toolshelf', key: 'active' } as const, {})
@@ -28,6 +29,7 @@ const pickHsv = atom({ plugin: 'toolshelf', key: 'pickHsv' } as const, null)
 const prefs = atom({ plugin: 'toolshelf', key: 'prefs' } as const, DEFAULTS)
 const settings = atom({ plugin: 'toolshelf', key: 'settings' } as const, false)
 const used = atom({ plugin: 'toolshelf', key: 'used' } as const, {})
+const offer = atom({ plugin: 'toolshelf', key: 'update' } as const, null)
 
 type RenderEvent = Parameters<Dollar['ui']['resolve']>[0] & { props: { scroll: { bodyRows: number } } }
 // Les surfaces qui ont des zones cliquables et un champ de saisie (terminal et bureau) : le panneau en a besoin.
@@ -636,11 +638,52 @@ async function cardState($: Dollar): Promise<CardState> {
   }
 }
 
+// Fenêtre de mise à jour, en haut du panneau : les boutons d'abord, puis ce qui change.
+function updateBox($: Dollar, v: View, o: UpdateOffer) {
+  const { Box, Text, Button } = v.els
+  const HOT = v.p.colors.hot
+  return (
+    <Box key="update" flexDirection="column" gap="sm" borderStyle="round" borderColor={HOT} paddingX="sm" paddingY="xs">
+      <Box flexDirection="row" justifyContent="space-between" alignItems="center" gap="sm" flexWrap="wrap">
+        <Text weight="bold">{v.t.updateTitle(o.from, o.to)}</Text>
+        <Box flexDirection="row" gap="md">
+          {o.status === 'offered' && (
+            <Button key="update-install" onPress={() => installUpdate($)}>
+              {v.t.updateInstall}
+            </Button>
+          )}
+          {o.status === 'offered' && (
+            <Button key="update-ignore" plain onPress={() => ignoreUpdate($)}>
+              <Text weight="semibold">{v.t.updateIgnore}</Text>
+            </Button>
+          )}
+          {o.status === 'done' && (
+            <Button key="update-close" onPress={() => closeUpdate($)}>
+              OK
+            </Button>
+          )}
+        </Box>
+      </Box>
+      {o.status === 'installing' && <Text dimColor>{v.t.updateInstalling}</Text>}
+      {o.status === 'done' && <Text color="success">{v.t.updateDone}</Text>}
+      {o.status === 'offered' && (
+        <Box flexDirection="column">
+          <Text size="caption" weight="semibold" color="subtle">{v.t.updateWhatsNew.toUpperCase()}</Text>
+          {o.notes.length === 0 && <Text dimColor>{v.t.updateNoNotes}</Text>}
+          {o.notes.map((n, i) => <Text key={'note-' + i}>• {n}</Text>)}
+        </Box>
+      )}
+    </Box>
+  )
+}
+
 async function toolsScreen($: Dollar, v: View) {
   const { Box, Text } = v.els
   const s = await cardState($)
+  const o = await read($, offer)
   return (
     <Box flexDirection="column" gap="md" paddingX="xs" backgroundColor={v.p.bg ?? undefined} minHeight={v.minRows}>
+      {o && updateBox($, v, o)}
       {header($, v, false)}
       {v.p.legend && legend($, v)}
       {SECTIONS.map(kind => {
