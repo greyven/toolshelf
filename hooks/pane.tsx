@@ -645,12 +645,13 @@ const UPDATE_INK = '#2b1d00'
 
 // Un bouton du panneau garde son texte blanc quelle que soit la couleur demandée (vu à l'essai) :
 // il est posé sur une pastille foncée, où le blanc se lit.
-function updateButton($: Dollar, v: View, key: string, text: string, onPress: () => unknown, pill = UPDATE_INK) {
+// Le bouton écrit dans la couleur de texte du thème (blanc en sombre, noir en clair) : la pastille prend l'inverse, lisible dans les deux.
+function updateButton($: Dollar, v: View, key: string, text: string, onPress: () => unknown) {
   const { Box, Button, Text } = v.els
   return (
-    <Box key={'pill-' + key} backgroundColor={pill} paddingX="sm">
+    <Box key={'pill-' + key} backgroundColor="inverseText" paddingX="sm">
       <Button key={key} plain onPress={onPress}>
-        <Text weight="semibold" color="#ffffff">{text}</Text>
+        <Text weight="semibold" color="text">{text}</Text>
       </Button>
     </Box>
   )
@@ -664,7 +665,7 @@ function updateBox($: Dollar, v: View, o: UpdateOffer) {
         <Text weight="bold" color={UPDATE_INK}>{v.t.updateTitle(o.from, o.to)}</Text>
         <Box flexDirection="row" gap="md">
           {o.status === 'offered' && updateButton($, v, 'update-install', v.t.updateInstall, () => installUpdate($))}
-          {o.status === 'offered' && updateButton($, v, 'update-ignore', v.t.updateIgnore, () => ignoreUpdate($), '#7a5a00')}
+          {o.status === 'offered' && updateButton($, v, 'update-ignore', v.t.updateIgnore, () => ignoreUpdate($))}
           {o.status === 'done' && updateButton($, v, 'update-close', 'OK', () => closeUpdate($))}
         </Box>
       </Box>

@@ -73,13 +73,22 @@ export async function installUpdate($: Dollar) {
   await update($, offer, x => (x ? { ...x, status: 'installing' as const } : x))
   const exe = await claudeExe($)
   const marketplace = o.key.split('@')[1] ?? ''
+  // La portée où le mod est installé (user, project…), sinon la mise à jour ne le trouve pas.
+  const record = (await readJson($, `${await claudeDir($)}/plugins/installed_plugins.json`))?.plugins?.[o.key]?.[0]
+  const scope = typeof record?.scope === 'string' ? record.scope : 'user'
   let ok = false
+  let why = ''
   try {
     await $.process.run([exe, 'plugin', 'marketplace', 'update', marketplace], { timeoutMs: 120000 })
-    ok = (await $.process.run([exe, 'plugin', 'update', o.key, '--scope', 'user'], { timeoutMs: 120000 })).exitCode === 0
-  } catch {}
+    const r = await $.process.run([exe, 'plugin', 'update', o.key, '--scope', scope], { timeoutMs: 120000 })
+    ok = r.exitCode === 0
+    why = (r.stderr || r.stdout).trim().split('\n')[0] ?? ''
+  } catch (err) {
+    why = String(err)
+  }
   await update($, offer, x => (x ? { ...x, status: ok ? ('done' as const) : ('offered' as const) } : x))
-  if (!ok) $.ui.toast(textes(((await read($, prefs)) ?? DEFAULTS).lang).updateFailed)
+  // La première ligne de l'erreur aide à comprendre un échec chez quelqu'un d'autre.
+  if (!ok) $.ui.toast(textes(((await read($, prefs)) ?? DEFAULTS).lang).updateFailed + (why ? ` (${why.slice(0, 160)})` : ''))
 }
 
 export async function ignoreUpdate($: Dollar) {

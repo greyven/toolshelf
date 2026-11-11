@@ -36,9 +36,28 @@ export async function isWindows($: Dollar) {
 }
 
 // L'installation officielle met claude dans ~/.local/bin (claude.exe sous Windows) ; sinon, celui du PATH.
+// Sans elle, sous Windows, la copie livrée avec l'application de bureau : Claude-Data\<app>\claude-code\<version>\<id>\claude.exe.
 export async function claudeExe($: Dollar) {
-  const local = `${await homeDir($)}/.local/bin/claude${(await isWindows($)) ? '.exe' : ''}`
-  return (await $.fs.exists(local)) ? local : 'claude'
+  const win = await isWindows($)
+  const local = `${await homeDir($)}/.local/bin/claude${win ? '.exe' : ''}`
+  if (await $.fs.exists(local)) return local
+  return (win && (await desktopClaude($))) || 'claude'
+}
+
+// shortcut: chemin de l'application de bureau Windows observé en novembre 2026 ; à revoir si l'application change de dossier.
+async function desktopClaude($: Dollar) {
+  const data = `${(await $.env.get('LOCALAPPDATA')) ?? ''}/Claude-Data`
+  for (const app of await listDirs($, data)) {
+    const base = `${data}/${app}/claude-code`
+    const versions = (await listDirs($, base)).sort((a, b) => b.localeCompare(a, undefined, { numeric: true }))
+    for (const ver of versions) {
+      for (const id of await listDirs($, `${base}/${ver}`)) {
+        const exe = `${base}/${ver}/${id}/claude.exe`
+        if (await $.fs.exists(exe)) return exe
+      }
+    }
+  }
+  return undefined
 }
 
 export async function readJson($: Dollar, path: string): Promise<any> {

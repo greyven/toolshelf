@@ -1,5 +1,16 @@
 [
   {
+    "version": "0.6.1",
+    "fr": [
+      "Le bouton Installer marche aussi quand Claude Code n'est utilisé que dans l'application de bureau, et donne la cause en cas d'échec.",
+      "Les boutons Installer et Ignorer sont lisibles en thème clair comme en thème sombre."
+    ],
+    "en": [
+      "The Install button also works when Claude Code is only used through the desktop app, and shows the cause if it fails.",
+      "The Install and Ignore buttons are readable in both light and dark themes."
+    ]
+  },
+  {
     "version": "0.6.0",
     "fr": [
       "Le numéro de la version installée s'affiche sous le bouton Réglages."
