@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.7.2",
+    "fr": [
+      "Vérification de mise à jour automatique."
+    ],
+    "en": [
+      "Automatic update check."
+    ]
+  },
+  {
     "version": "0.7.1",
     "fr": [
       "La fenêtre de mise à jour disparaît d'elle-même si la version proposée est déjà installée.",
