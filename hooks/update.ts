@@ -51,6 +51,8 @@ export async function checkUpdate($: Dollar) {
   const local = await readJson($, `${$.plugin.root}/.claude-plugin/plugin.json`)
   const base = rawBase(local?.repository)
   if (typeof local?.version !== 'string' || !base) return
+  // Une offre déjà dépassée par la version chargée (mise à jour faite autrement entre-temps) disparaît.
+  await update($, offer, o => (o?.status === 'offered' && !isNewer(o.to, local.version) ? null : o))
   const remote = await fetchJson($, base + '.claude-plugin/plugin.json')
   const to = remote?.version
   const p = (await read($, prefs)) ?? DEFAULTS

@@ -34,7 +34,7 @@ export async function writeShared($: Dollar, patch: Shared) {
 }
 
 export function withDefaults(saved: Partial<Prefs>): Prefs {
-  return { ...DEFAULTS, ...saved, colors: { ...DEFAULTS.colors, ...saved.colors } }
+  return { ...DEFAULTS, ...saved }
 }
 
 // Remplace l'état de la discussion par ce que contient le fichier commun : réglages, et fiches de la langue choisie.

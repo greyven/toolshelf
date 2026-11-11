@@ -36,8 +36,6 @@ export type Lang = 'fr' | 'en'
 
 export type Prefs = {
   lang: Lang
-  bg: string | null
-  colors: Record<Tint, string>
   legend: boolean
   folded?: string[]
   hidden: string[]
@@ -57,8 +55,6 @@ declare module 'claude-code' {
       found: Found[]
       prefs: Prefs
       settings: boolean
-      picking: Tint | 'bg' | null
-      pickHsv: { h: number; s: number; v: number } | null
       auto: Record<string, AutoInfo>
       // Répertoire de fiches livré avec le mod, relu à chaque recensement.
       livrees: Record<string, AutoInfo>

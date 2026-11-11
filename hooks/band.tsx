@@ -5,7 +5,7 @@ import type { Register } from 'claude-code'
 
 import { inkOn } from './colors'
 import type { Dollar } from './files'
-import { DEFAULTS } from './state'
+import { COLORS, DEFAULTS } from './state'
 import { withKeywords } from './fiches'
 import { suggestionsFor } from './suggest'
 import { textes } from './textes'
@@ -56,7 +56,7 @@ export const registerBand: Register = on => {
     if (shown.length === 0) return next(e)
 
     const { Box, Text } = $.ui.resolve(e)
-    const hot = DEFAULTS.colors.hot
+    const hot = COLORS.hot
     const t = textes(p.lang)
     // La bande est partagée avec d'autres plugins (ponytail) : un cadre au contour mauve, comme une suggestion
     // dans le panneau, sépare les suggestions de ce qu'ils affichent.

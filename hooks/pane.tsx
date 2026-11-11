@@ -3,15 +3,14 @@ import { atom, read, update } from 'claude-code'
 
 import type { AutoInfo, Found, Prefs, Tint, UpdateOffer } from '../types'
 
-import { type ColorTarget, togglePicker, typeHex } from './colorpick'
-import { inkOn, isHex } from './colors'
+import { inkOn } from './colors'
 import { discover } from './discover'
 import { infoOf, keywordsOf, literalKeyword, short } from './fiches'
 import { writeFiche } from './autofiche'
 import { type Dollar, readJson } from './files'
 import { reloadShared, setPrefs } from './shared'
-import { DEFAULTS, GROUP } from './state'
-import { type CheckState, checkSvg, pickerSvg } from './svg'
+import { COLORS, DEFAULTS, GROUP } from './state'
+import { type CheckState, checkSvg } from './svg'
 import { checkUpdate, closeUpdate, ignoreUpdate, installUpdate } from './update'
 import { LANG_NAMES, LANGS, type Lang, type Textes, textes } from './textes'
 
@@ -24,8 +23,6 @@ const kwOpen = atom({ plugin: 'toolshelf', key: 'kwOpen' } as const, null)
 const livrees = atom({ plugin: 'toolshelf', key: 'livrees' } as const, {})
 const open = atom({ plugin: 'toolshelf', key: 'open' } as const, null)
 const opened = atom({ plugin: 'toolshelf', key: 'opened' } as const, [])
-const picking = atom({ plugin: 'toolshelf', key: 'picking' } as const, null)
-const pickHsv = atom({ plugin: 'toolshelf', key: 'pickHsv' } as const, null)
 const prefs = atom({ plugin: 'toolshelf', key: 'prefs' } as const, DEFAULTS)
 const settings = atom({ plugin: 'toolshelf', key: 'settings' } as const, false)
 const used = atom({ plugin: 'toolshelf', key: 'used' } as const, {})
@@ -76,7 +73,7 @@ function toggleOpened($: Dollar, key: string) {
 
 function chip($: Dollar, v: View, t: Tint, text: string) {
   const { Text } = v.els
-  const bg = v.p.colors[t]
+  const bg = COLORS[t]
   return <Text size="caption" weight="semibold" color={inkOn(bg)} backgroundColor={bg}> {text} </Text>
 }
 
@@ -138,106 +135,6 @@ function settingCheck($: Dollar, v: View, key: string, isOn: boolean, text: stri
     <Button key={key} plain onPress={onPress}>
       <Text>{isOn ? '☑' : '☐'} {text}</Text>
     </Button>
-  )
-}
-
-// Le sélecteur ouvert : dégradé (bureau) ou grille de cases (terminal), aperçu, champ hexadécimal, OK.
-function picker($: Dollar, v: View, target: ColorTarget, hex: string, hsv: { h: number; s: number; v: number }) {
-  const { Box, Text, Button, Input, Client } = v.els
-  const { Svg } = v
-  return (
-    <Box flexDirection="row" gap="md" flexWrap="wrap" paddingY="xs">
-      {Svg ? (
-        // L'application ne donne la souris qu'à une zone dessinée après le dégradé et ignore les marges négatives ;
-        // une image qui dépasse sa boîte déborde à parts égales en haut et en bas. L'image du dégradé, deux fois plus
-        // haute avec une moitié haute transparente, est centrée sur une boîte de hauteur zéro : sa moitié visible
-        // recouvre exactement la zone de clic qui suit.
-        // Tailles mesurées sur capture : 36 cases = 266 px, une ligne ≈ 19,7 px ; le dégradé visible fait 8 lignes (158 px).
-        <Box flexDirection="column" width={36}>
-          <Box width={36} height={0}>
-            <Svg source={pickerSvg(hsv.h, hsv.s, hsv.v)} alt={v.t.pickerAlt} width={266} height={316} />
-          </Box>
-          <Client key={'ov-' + target} module="./overlay.tsx" props={{ target, cols: 36, rows: 8 }} width={36} height={8} />
-        </Box>
-      ) : (
-        <Client key={'pk-' + target} module="./picker.tsx" props={{ target, hex }} width={27} height={10} />
-      )}
-      <Box flexDirection="column" gap="sm">
-        <Text size="caption" dimColor>{v.t.chosenColor}</Text>
-        <Box width={12} height={3} backgroundColor={hex} borderStyle="round" borderColor="subtle" />
-        <Input
-          key={'hex-' + target}
-          label="#"
-          value={hex.slice(1)}
-          placeholder="5d79c0"
-          onInput={(t: string) => (isHex(t) ? typeHex($, target, t) : undefined)}
-          onSubmit={(t: string) => (isHex(t) ? typeHex($, target, t) : undefined)}
-        />
-        <Button key={'ok-' + target} onPress={() => update($, picking, () => null)}>
-          OK
-        </Button>
-      </Box>
-    </Box>
-  )
-}
-
-// Une ligne de réglage : nom, carré de la couleur actuelle (clic = sélecteur), puis le sélecteur s'il est ouvert.
-function colorRow($: Dollar, v: View, pickTarget: ColorTarget | null, hsv: { h: number; s: number; v: number }, target: ColorTarget, name: JSX.Element, hex: string, extra?: JSX.Element) {
-  const { Box, Text, Client } = v.els
-  return (
-    <Box key={'row-' + target} flexDirection="column" gap="xs">
-      <Box flexDirection="row" gap="sm" alignItems="center">
-        <Box width={16}>{name}</Box>
-        <Box borderStyle="round" borderColor={pickTarget === target ? 'text' : 'subtle'}>
-          <Client key={'sw-' + target} module="./swatch.tsx" props={{ target, hex }} width={6} height={2} />
-        </Box>
-        <Text mono size="caption" dimColor>{hex}</Text>
-        {extra}
-      </Box>
-      {pickTarget === target && picker($, v, target, hex, hsv)}
-    </Box>
-  )
-}
-
-
-function backgroundSettings($: Dollar, v: View, pickTarget: ColorTarget | null, hsv: { h: number; s: number; v: number }) {
-  const { Box, Text, Button } = v.els
-  const { p } = v
-  return (
-    <Box flexDirection="column" gap="xs">
-      {heading($, v, v.t.background)}
-      <Text size="caption" dimColor>{v.t.clickSwatch}</Text>
-      {colorRow(
-        $,
-        v,
-        pickTarget,
-        hsv,
-        'bg',
-        <Text weight="semibold">{v.t.backgroundColor}</Text>,
-        p.bg ?? '#1b1b1b',
-        p.bg ? (
-          <Button key="bg-reset" plain onPress={() => setPrefs($, q => ({ ...q, bg: null }))}>
-            <Text dimColor>{v.t.themeReset}</Text>
-          </Button>
-        ) : (
-          <Text size="caption" dimColor>{v.t.theme}</Text>
-        ),
-      )}
-    </Box>
-  )
-}
-
-function tintSettings($: Dollar, v: View, pickTarget: ColorTarget | null, hsv: { h: number; s: number; v: number }) {
-  const { Box, Text, Button } = v.els
-  const { p } = v
-  return (
-    <Box flexDirection="column" gap="xs">
-      {heading($, v, v.t.tagColors)}
-      {TINTS.map(t => colorRow($, v, pickTarget, hsv, t, chip($, v, t, v.t.tints[t][0]), p.colors[t]))}
-      <Button key="reset-colors" plain onPress={() => setPrefs($, q => ({ ...q, colors: DEFAULTS.colors }))}>
-        <Text dimColor>{v.t.resetColors}</Text>
-      </Button>
-    </Box>
   )
 }
 
@@ -375,11 +272,9 @@ function shownToolsSettings($: Dollar, v: View) {
 
 async function settingsScreen($: Dollar, v: View) {
   const { Box } = v.els
-  const pickTarget = await read($, picking)
-  const hsv = (await read($, pickHsv)) ?? { h: 0, s: 0, v: 0 }
   const cards = { ...((await read($, auto)) ?? {}), ...((await read($, livrees)) ?? {}) }
   return (
-    <Box flexDirection="column" gap="md" paddingX="xs" backgroundColor={v.p.bg ?? undefined} minHeight={v.minRows}>
+    <Box flexDirection="column" gap="md" paddingX="xs" minHeight={v.minRows}>
       {header($, v, true)}
       {languageSettings($, v)}
       {displaySettings($, v)}
@@ -411,7 +306,7 @@ function checkBox($: Dollar, v: View, target: string, state: CheckState) {
   const checked = state !== 'off'
   const locked = state === 'locked'
   if (!Svg) return <Client key={'chk-' + target} module="./check.tsx" props={{ target, checked, locked }} width={3} height={1} />
-  // Même montage que le sélecteur : image deux fois plus haute, moitié haute transparente, dans une boîte de hauteur 0.
+  // Image deux fois plus haute, moitié haute transparente, dans une boîte de hauteur 0.
   return (
     <Box flexDirection="column" width={3}>
       <Box width={3} height={0}>
@@ -436,7 +331,7 @@ function groupState(members: Found[]): CheckState {
 
 function cardTitleRow($: Dollar, v: View, f: Found, s: CardState, isHot: boolean, ink: string | undefined) {
   const { Box, Text, Button } = v.els
-  const HOT_INK = inkOn(v.p.colors.hot)
+  const HOT_INK = inkOn(COLORS.hot)
   const mode = infoOf(f.id, s.cards)?.mode
   return (
     <Box flexDirection="row" alignItems="center" justifyContent="space-between" gap="sm">
@@ -457,7 +352,7 @@ function cardTitleRow($: Dollar, v: View, f: Found, s: CardState, isHot: boolean
 
 function cardDetails($: Dollar, v: View, f: Found, s: CardState, isHot: boolean, ink: string | undefined) {
   const { Box, Text, Button } = v.els
-  const HOT_INK = inkOn(v.p.colors.hot)
+  const HOT_INK = inkOn(COLORS.hot)
   const info = infoOf(f.id, s.cards)
   const isWriting = s.busy.includes(f.id)
   const label = (t: string) => <Text size="caption" weight="semibold" color={isHot ? HOT_INK : 'subtle'}>{t.toUpperCase()}</Text>
@@ -499,7 +394,7 @@ function cardDetails($: Dollar, v: View, f: Found, s: CardState, isHot: boolean,
 // Une carte par outil : fond mauve = en cours d'utilisation ; contour mauve seul = suggestion d'après la demande.
 function card($: Dollar, v: View, f: Found, s: CardState) {
   const { Box, Text } = v.els
-  const HOT = v.p.colors.hot
+  const HOT = COLORS.hot
   const HOT_INK = inkOn(HOT)
   const isHot = !!s.activeMap[f.id]
   const isSuggested = !isHot && !!s.hotMap[f.id]
@@ -530,7 +425,7 @@ function card($: Dollar, v: View, f: Found, s: CardState) {
 // Carte d'un membre de groupe : juste son nom et la flèche ; dépliée, la fiche complète.
 function memberCard($: Dollar, v: View, f: Found, s: CardState) {
   const { Box, Text, Button } = v.els
-  const HOT = v.p.colors.hot
+  const HOT = COLORS.hot
   const HOT_INK = inkOn(HOT)
   const isHot = !!s.activeMap[f.id]
   const isSuggested = !isHot && !!s.hotMap[f.id]
@@ -557,7 +452,7 @@ function memberCard($: Dollar, v: View, f: Found, s: CardState) {
 // Repliée, elle signale quand même le membre en cours d'utilisation ou suggéré.
 function groupCard($: Dollar, v: View, e: Entry, s: CardState) {
   const { Box, Text, Button } = v.els
-  const HOT = v.p.colors.hot
+  const HOT = COLORS.hot
   const isOpen = v.opened.includes(e.id)
   const enabled = e.members.filter(f => f.enabled).length
   const inUse = e.members.find(f => s.activeMap[f.id])
@@ -688,7 +583,7 @@ async function toolsScreen($: Dollar, v: View) {
   // La version du mod chargé, sous le bouton Réglages.
   const version = (await readJson($, `${$.plugin.root}/.claude-plugin/plugin.json`))?.version
   return (
-    <Box flexDirection="column" gap="md" paddingX="xs" backgroundColor={v.p.bg ?? undefined} minHeight={v.minRows}>
+    <Box flexDirection="column" gap="md" paddingX="xs" minHeight={v.minRows}>
       {o && o.status !== 'closed' && updateBox($, v, o)}
       <Box flexDirection="column" gap="xs">
         {header($, v, false)}
@@ -711,9 +606,7 @@ async function toolsScreen($: Dollar, v: View) {
 export async function renderPane($: Dollar, e: RenderEvent) {
   const els = $.ui.resolve(e) as Els
   const all = (await read($, found)) ?? []
-  const saved = (await read($, prefs)) ?? DEFAULTS
-  // Couleurs fixes : le fond suit celui de l'application (plus de fond ni de couleurs personnalisés).
-  const p: Prefs = { ...saved, bg: null, colors: DEFAULTS.colors }
+  const p = (await read($, prefs)) ?? DEFAULTS
   const v: View = {
     els,
     t: textes(p.lang),

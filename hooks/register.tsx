@@ -3,8 +3,6 @@
 import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
 
-import { type ColorTarget, pickAt, togglePicker, typeHex } from './colorpick'
-import { isHex } from './colors'
 import { discover } from './discover'
 import { withKeywords } from './fiches'
 import { clearBand, registerBand } from './band'
@@ -26,8 +24,8 @@ const livrees = atom({ plugin: 'toolshelf', key: 'livrees' } as const, {})
 const prefs = atom({ plugin: 'toolshelf', key: 'prefs' } as const, DEFAULTS)
 const used = atom({ plugin: 'toolshelf', key: 'used' } as const, {})
 
-// Messages des zones cliquables (check.tsx, swatch.tsx, overlay.tsx, picker.tsx).
-type ClickMessage = { toggle?: string; open?: ColorTarget; target?: ColorTarget; hex?: string; zone?: 'sv' | 'hue'; fx?: number; fy?: number }
+// Message de la zone cliquable des cases (check.tsx).
+type ClickMessage = { toggle?: string }
 
 async function onCheckClicked($: Dollar, id: string) {
   const all = (await read($, found)) ?? []
@@ -44,9 +42,6 @@ async function onCheckClicked($: Dollar, id: string) {
 
 async function onClick($: Dollar, d: ClickMessage) {
   if (d.toggle) await onCheckClicked($, d.toggle)
-  if (d.open) await togglePicker($, d.open)
-  if (d.target && d.hex && isHex(d.hex)) await typeHex($, d.target, d.hex)
-  if (d.target && d.zone && typeof d.fx === 'number' && typeof d.fy === 'number') await pickAt($, d.target, d.zone, d.fx, d.fy)
 }
 
 async function t($: Dollar) {

@@ -1,5 +1,16 @@
 [
   {
+    "version": "0.7.1",
+    "fr": [
+      "La fenêtre de mise à jour disparaît d'elle-même si la version proposée est déjà installée.",
+      "Le code de l'ancien sélecteur de couleur est supprimé."
+    ],
+    "en": [
+      "The update window goes away by itself if the offered version is already installed.",
+      "The old color picker code is removed."
+    ]
+  },
+  {
     "version": "0.7.0",
     "fr": [
       "Le panneau suit le thème de l'application, clair ou sombre : tout reste lisible, il n'y a plus de couleurs à régler."

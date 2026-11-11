@@ -15,13 +15,6 @@ export const fr = {
 
   // Réglages
   language: 'Langue',
-  background: 'Fond du panneau',
-  clickSwatch: 'Clique un carré pour ouvrir le sélecteur de couleur.',
-  backgroundColor: 'Couleur de fond',
-  themeReset: '↺ thème',
-  theme: '(thème)',
-  tagColors: 'Couleurs des étiquettes',
-  resetColors: '↺ Couleurs par défaut',
   display: 'Affichage',
   showLegend: 'Afficher la légende',
   shownTools: (shown: number, all: number) => `Outils affichés · ${shown}/${all}`,
@@ -32,7 +25,6 @@ export const fr = {
   addKeyword: 'Ajouter un mot-clé',
   resetKeywords: "↺ Mots-clés d'origine",
   noKeyword: 'Aucun mot-clé : seul le nom de l’outil le fait suggérer.',
-  pickerAlt: 'Sélecteur de couleur',
   chosenColor: 'Couleur choisie',
 
   // Étiquettes : nom affiché et sens dans la légende

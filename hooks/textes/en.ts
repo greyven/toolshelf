@@ -15,13 +15,6 @@ export const en: Textes = {
   settings: '⚙ Settings',
 
   language: 'Language',
-  background: 'Panel background',
-  clickSwatch: 'Click a square to open the color picker.',
-  backgroundColor: 'Background color',
-  themeReset: '↺ theme',
-  theme: '(theme)',
-  tagColors: 'Tag colors',
-  resetColors: '↺ Default colors',
   display: 'Display',
   showLegend: 'Show the legend',
   shownTools: (shown, all) => `Tools shown · ${shown}/${all}`,
@@ -32,7 +25,6 @@ export const en: Textes = {
   addKeyword: 'Add a keyword',
   resetKeywords: '↺ Original keywords',
   noKeyword: "No keyword: only the tool's name makes it suggested.",
-  pickerAlt: 'Color picker',
   chosenColor: 'Chosen color',
 
   tints: {
