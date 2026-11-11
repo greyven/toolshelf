@@ -17,7 +17,7 @@ Un panneau pour Claude Code qui montre **tous tes outils au même endroit** : pl
 - **Montre quels outils Claude utilise** pour traiter ta demande : l'outil en cours d'utilisation est surligné dans le panneau.
 - **Cases à cocher** pour activer ou désactiver un plugin, un skill personnel ou un connecteur, sans rien supprimer.
 - **Mises à jour** : quand une nouvelle version est publiée, une fenêtre en haut du panneau le signale, montre ce qui change et l'installe d'un clic (ou se fait oublier jusqu'à la version suivante).
-- **Réglages** (⚙) : langue (français ou anglais), couleurs, légende, outils affichés, et mots-clés de déclenchement de chaque outil.
+- **Réglages** (⚙) : langue (français ou anglais), légende, outils affichés, et mots-clés de déclenchement de chaque outil.
 
 Pensé pour l'onglet Code de l'application de bureau Claude ; il s'affiche aussi dans Claude Code au terminal. Prévu pour Windows, macOS et Linux (testé surtout sous Windows).
 
@@ -37,7 +37,7 @@ Le panneau s'ouvre au début de chaque discussion. La commande `/tools` le rouvr
 
 | Pour… | Où |
 |---|---|
-| Changer la langue, les couleurs, les mots-clés | ⚙ Réglages, dans le panneau |
+| Changer la langue, les mots-clés | ⚙ Réglages, dans le panneau |
 | Modifier ou ajouter une fiche livrée | `fiches/fr.json` et `fiches/en.json` |
 | Ajouter un programme du PC (Blender, Git…) | `fiches/outils-pc.json` : `{ "id": "Blender", "program": "blender" }` |
 | Réunir des outils dans une seule carte (même auteur…) | `fiches/groupes.json` : `{ "id": "Emil Kowalski", "members": ["animate", "break-ui"] }` |
@@ -81,7 +81,7 @@ A panel for Claude Code that shows **all your tools in one place**: plugins, ski
 - **Shows which tools Claude uses** to handle your request: the tool in use is highlighted in the panel.
 - **Checkboxes** to enable or disable a plugin, a personal skill or a connector, without deleting anything.
 - **Updates**: when a new version is published, a window at the top of the panel says so, shows what changes and installs it in one click (or stays quiet until the next version).
-- **Settings** (⚙): language (French or English), colors, legend, shown tools, and each tool's trigger keywords.
+- **Settings** (⚙): language (French or English), legend, shown tools, and each tool's trigger keywords.
 
 Designed for the Code tab of the Claude desktop app; it also shows in Claude Code in the terminal. Meant for Windows, macOS and Linux (tested mostly on Windows).
 
@@ -101,7 +101,7 @@ The panel opens at the start of each conversation. The `/tools` command reopens 
 
 | To… | Where |
 |---|---|
-| Change the language, colors, keywords | ⚙ Settings, in the panel |
+| Change the language, keywords | ⚙ Settings, in the panel |
 | Edit or add a shipped card | `fiches/en.json` and `fiches/fr.json` |
 | Add a computer program (Blender, Git…) | `fiches/outils-pc.json`: `{ "id": "Blender", "program": "blender" }` |
 | Gather tools into a single card (same author…) | `fiches/groupes.json`: `{ "id": "Emil Kowalski", "members": ["animate", "break-ui"] }` |

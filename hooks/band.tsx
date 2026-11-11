@@ -56,7 +56,7 @@ export const registerBand: Register = on => {
     if (shown.length === 0) return next(e)
 
     const { Box, Text } = $.ui.resolve(e)
-    const hot = p.colors.hot
+    const hot = DEFAULTS.colors.hot
     const t = textes(p.lang)
     // La bande est partagée avec d'autres plugins (ponytail) : un cadre au contour mauve, comme une suggestion
     // dans le panneau, sépare les suggestions de ce qu'ils affichent.

@@ -81,43 +81,6 @@ test('liste, surlignage et usage', async ($, on) => {
     await ui.press({ key: 'gear' })
     expect(await ui.find({ type: 'Text', text: /3 outils affichés sur 3/ })).toBeTruthy()
 
-    // Sélecteur de couleur : clic sur le carré, clic dans le dégradé, puis saisie hexadécimale.
-    await ui.press({ key: 'gear' })
-    await ui.pointer({ type: 'down', x: 1, y: 0, button: 'left', in: 'sw-actif' })
-    const color = () => (stored.prefs as { colors: Record<string, string> }).colors.actif
-    if (surface === 'desktop') {
-      // Dégradé vectoriel : une case = un pixel ici, pour viser précisément.
-      await ui.resize({ columns: 264, rows: 160, in: 'ov-actif' })
-      await ui.pointer({ type: 'down', x: 0, y: 0, button: 'left', in: 'ov-actif' })
-      await ui.pointer({ type: 'up', x: 0, y: 0, button: 'left', in: 'ov-actif' })
-      expect(color()).toMatch(/^#f[ef]f[ef]f[ef]$/)
-      await ui.pointer({ type: 'down', x: 219, y: 0, button: 'left', in: 'ov-actif' })
-      await ui.pointer({ type: 'up', x: 219, y: 0, button: 'left', in: 'ov-actif' })
-      // Barre de teinte : à mi-hauteur, cyan.
-      await ui.pointer({ type: 'down', x: 245, y: 80, button: 'left', in: 'ov-actif' })
-      await ui.pointer({ type: 'move', x: 245, y: 80, button: 'left', in: 'ov-actif' })
-      await ui.pointer({ type: 'up', x: 245, y: 80, button: 'left', in: 'ov-actif' })
-      expect(color()).toMatch(/^#0[0-9a-f]f[0-9a-f]f[0-9a-f]$/)
-      // Séquence réelle de l'application de bureau : pas de « down », des « move » bouton gauche puis « up ».
-      await ui.pointer({ type: 'move', x: 100, y: 0, button: 'left', in: 'ov-actif' })
-      await ui.pointer({ type: 'move', x: 0, y: 0, button: 'left', in: 'ov-actif' })
-      await ui.pointer({ type: 'up', x: 0, y: 0, button: 'left', in: 'ov-actif' })
-      expect(color()).toMatch(/^#f[ef]f[ef]f[ef]$/)
-      // Glissé sorti par le coin bas/droite : la case du bord (son centre) est retenue, pas le noir pur du bord.
-      await ui.pointer({ type: 'move', x: 10, y: 10, button: 'left', in: 'ov-actif' })
-      await ui.pointer({ type: 'move', x: 500, y: 500, button: 'left', in: 'ov-actif' })
-      await ui.pointer({ type: 'up', x: 500, y: 500, button: 'left', in: 'ov-actif' })
-      expect(color()).not.toBe('#000000')
-    } else {
-      await ui.pointer({ type: 'down', x: 0, y: 0, button: 'left', in: 'pk-actif' })
-      await ui.pointer({ type: 'up', x: 0, y: 0, button: 'left', in: 'pk-actif' })
-      expect(color()).toBe('#ffffff')
-    }
-    await ui.input({ key: 'hex-actif', text: '5D79C0', kind: 'change' })
-    expect((stored.prefs as { colors: Record<string, string> }).colors.actif).toBe('#5d79c0')
-    expect(await ui.find({ type: 'Text', text: /#5d79c0/ })).toBeTruthy()
-    await ui.press({ key: 'ok-actif' })
-    await ui.press({ key: 'gear' })
     await ui.unmount()
   }
 })
@@ -195,8 +158,6 @@ test('les réglages viennent du fichier commun, quelle que soit la discussion', 
   const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
   expect(await ui.find({ type: 'Text', text: /agit tout seul/ })).toBeFalsy()
   await ui.press({ key: 'gear' })
-  expect(await ui.find({ type: 'Text', text: /#30251f/ })).toBeTruthy()
-  expect(await ui.find({ type: 'Text', text: /#123456/ })).toBeTruthy()
   await ui.press({ key: 'legend' })
   // Les réglages sont recopiés sous le nouveau nom ; l'ancien fichier reste intact.
   expect(JSON.parse(disk[NEW]!).prefs.legend).toBe(true)

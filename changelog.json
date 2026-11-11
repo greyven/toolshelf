@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.7.0",
+    "fr": [
+      "Le panneau suit le thème de l'application, clair ou sombre : tout reste lisible, il n'y a plus de couleurs à régler."
+    ],
+    "en": [
+      "The panel follows the app's light or dark theme: everything stays readable, with no colors left to set."
+    ]
+  },
+  {
     "version": "0.6.1",
     "fr": [
       "Le bouton Installer marche aussi quand Claude Code n'est utilisé que dans l'application de bureau, et donne la cause en cas d'échec.",

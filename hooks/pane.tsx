@@ -199,6 +199,7 @@ function colorRow($: Dollar, v: View, pickTarget: ColorTarget | null, hsv: { h: 
   )
 }
 
+
 function backgroundSettings($: Dollar, v: View, pickTarget: ColorTarget | null, hsv: { h: number; s: number; v: number }) {
   const { Box, Text, Button } = v.els
   const { p } = v
@@ -381,8 +382,6 @@ async function settingsScreen($: Dollar, v: View) {
     <Box flexDirection="column" gap="md" paddingX="xs" backgroundColor={v.p.bg ?? undefined} minHeight={v.minRows}>
       {header($, v, true)}
       {languageSettings($, v)}
-      {backgroundSettings($, v, pickTarget, hsv)}
-      {tintSettings($, v, pickTarget, hsv)}
       {displaySettings($, v)}
       {keywordSettings($, v, cards, await read($, kwOpen))}
       {shownToolsSettings($, v)}
@@ -712,7 +711,9 @@ async function toolsScreen($: Dollar, v: View) {
 export async function renderPane($: Dollar, e: RenderEvent) {
   const els = $.ui.resolve(e) as Els
   const all = (await read($, found)) ?? []
-  const p = (await read($, prefs)) ?? DEFAULTS
+  const saved = (await read($, prefs)) ?? DEFAULTS
+  // Couleurs fixes : le fond suit celui de l'application (plus de fond ni de couleurs personnalisés).
+  const p: Prefs = { ...saved, bg: null, colors: DEFAULTS.colors }
   const v: View = {
     els,
     t: textes(p.lang),
