@@ -20,5 +20,27 @@
       "review-animations",
       "write-swift"
     ]
+  },
+  {
+    "id": "Gamedev Skills",
+    "members": [
+      "roblox-characters",
+      "roblox-datastores",
+      "roblox-luau",
+      "roblox-networking",
+      "roblox-physics",
+      "roblox-simulator-economy",
+      "roblox-studio-workflow",
+      "roblox-ui",
+      "unity-animation",
+      "unity-build-pipeline",
+      "unity-build-size",
+      "unity-csharp-scripting",
+      "unity-input-system",
+      "unity-navmesh",
+      "unity-physics",
+      "unity-scriptableobjects",
+      "unity-tilemap-2d"
+    ]
   }
 ]

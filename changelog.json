@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.5.3",
+    "fr": [
+      "Les skills Gamedev (Roblox et Unity) sont réunis dans une seule carte, comme ceux d'Emil Kowalski."
+    ],
+    "en": [
+      "The Gamedev skills (Roblox and Unity) are gathered into a single card, like Emil Kowalski's."
+    ]
+  },
+  {
     "version": "0.5.2",
     "fr": [
       "La fenêtre de mise à jour a des couleurs fixes (fond ambre), visibles sur tous les thèmes.",
@@ -12,8 +21,12 @@
   },
   {
     "version": "0.5.1",
-    "fr": ["/tools et ↻ Actualiser vérifient aussi s'il existe une nouvelle version, sans attendre une nouvelle conversation."],
-    "en": ["/tools and ↻ Refresh also check for a new version, without waiting for a new conversation."]
+    "fr": [
+      "/tools et ↻ Actualiser vérifient aussi s'il existe une nouvelle version, sans attendre une nouvelle conversation."
+    ],
+    "en": [
+      "/tools and ↻ Refresh also check for a new version, without waiting for a new conversation."
+    ]
   },
   {
     "version": "0.5.0",
@@ -39,7 +52,11 @@
   },
   {
     "version": "0.3.1",
-    "fr": ["La commande du panneau s'appelle maintenant /tools."],
-    "en": ["The panel command is now /tools."]
+    "fr": [
+      "La commande du panneau s'appelle maintenant /tools."
+    ],
+    "en": [
+      "The panel command is now /tools."
+    ]
   }
 ]
