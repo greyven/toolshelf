@@ -7,6 +7,7 @@ export const en: Textes = {
   commandDone: 'Tools panel opened and list refreshed.',
 
   settingsIntro: 'Panel settings, kept for your next sessions.',
+  installedVersion: v => `Installed version: ${v}`,
   toolsIntro: (shown, all) => `${shown} of ${all} tools shown. Click a card to open it.`,
   refresh: '↻ Refresh',
   refreshed: 'Tool list refreshed.',

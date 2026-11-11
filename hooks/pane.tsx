@@ -8,7 +8,7 @@ import { inkOn, isHex } from './colors'
 import { discover } from './discover'
 import { infoOf, keywordsOf, literalKeyword, short } from './fiches'
 import { writeFiche } from './autofiche'
-import type { Dollar } from './files'
+import { type Dollar, readJson } from './files'
 import { reloadShared, setPrefs } from './shared'
 import { DEFAULTS, GROUP } from './state'
 import { type CheckState, checkSvg, pickerSvg } from './svg'
@@ -685,10 +685,19 @@ async function toolsScreen($: Dollar, v: View) {
   const { Box, Text } = v.els
   const s = await cardState($)
   const o = await read($, offer)
+  // La version du mod chargé, sous le bouton Réglages.
+  const version = (await readJson($, `${$.plugin.root}/.claude-plugin/plugin.json`))?.version
   return (
     <Box flexDirection="column" gap="md" paddingX="xs" backgroundColor={v.p.bg ?? undefined} minHeight={v.minRows}>
       {o && o.status !== 'closed' && updateBox($, v, o)}
-      {header($, v, false)}
+      <Box flexDirection="column" gap="xs">
+        {header($, v, false)}
+        {typeof version === 'string' && (
+          <Box flexDirection="row" justifyContent="flex-end">
+            <Text size="caption" dimColor>{v.t.installedVersion(version)}</Text>
+          </Box>
+        )}
+      </Box>
       {v.p.legend && legend($, v)}
       {SECTIONS.map(kind => {
         const items = v.list.filter(f => f.kind === kind)

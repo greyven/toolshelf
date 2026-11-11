@@ -6,6 +6,7 @@ export const fr = {
 
   // En-tête
   settingsIntro: 'Réglages du panneau, gardés pour tes prochaines sessions.',
+  installedVersion: (v: string) => `Version installée : ${v}`,
   toolsIntro: (shown: number, all: number) => `${shown} outils affichés sur ${all}. Clique une carte pour l'ouvrir.`,
   refresh: '↻ Actualiser',
   refreshed: 'Liste des outils actualisée.',

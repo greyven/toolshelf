@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.6.0",
+    "fr": [
+      "Le numéro de la version installée s'affiche sous le bouton Réglages."
+    ],
+    "en": [
+      "The installed version number is shown under the Settings button."
+    ]
+  },
+  {
     "version": "0.5.3",
     "fr": [
       "Les skills Gamedev (Roblox et Unity) sont réunis dans une seule carte, comme ceux d'Emil Kowalski."
